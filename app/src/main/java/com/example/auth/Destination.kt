@@ -1,7 +1,8 @@
 package com.example.exo2
 
 sealed class Destination(val route:String) {
-
+    object Profile:Destination("Profile")
+    object MesReservation:Destination("MesReservation")
     object Splash:Destination("splash")
     object SignIn:Destination("signIn")
     object SignUp:Destination("signUp")

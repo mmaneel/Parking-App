@@ -72,7 +72,9 @@ fun TextWithIcon(text:String, fontSize:TextUnit,color:Color ,Icon:ImageVector, i
 
 @Composable
 fun ParkingList(parks:List<Parking>, navController: NavHostController)
+
 {
+
     val context = LocalContext.current
 
     Column (

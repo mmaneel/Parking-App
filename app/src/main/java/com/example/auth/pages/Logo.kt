@@ -6,6 +6,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -40,7 +43,10 @@ fun firstPage(navController:NavHostController){
     Column(
         modifier = Modifier
             .verticalScroll(rememberScrollState())
-            .background(color = Color(0xFF773FFF)),
+            .background(color = Color(0xFF773FFF))
+            .fillMaxWidth()
+            .fillMaxHeight(),
+
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
 
@@ -69,7 +75,7 @@ fun firstPage(navController:NavHostController){
 
         LaunchedEffect(navController) {
             delay(2000)
-            navController.navigate(Destination.SignIn.route)
+            navController.navigate(Destination.ParkingList.route)
         }
 
     }
