@@ -18,6 +18,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
@@ -112,7 +113,7 @@ Scaffold (
         composable(Destination.Splash.route) { firstPage(navController)}
         composable(Destination.SignIn.route) { DisplaySignIn(navController) }
         composable(Destination.SignUp.route) { DisplaySignUP(navController) }
-        composable(Destination.MesReservation.route) { DisplayMesReservation(navController) }
+        composable(Destination.MesReservation.route) { DisplayMesReservation(parks= getData(),navController) }
         composable(Destination.Profile.route) { DisplayProfile(navController) }
         composable(Destination.ParkingList.route) { ParkingList(parks = getData(), navController) }
         composable(Destination.ParkingDetails.route) {navBack->
