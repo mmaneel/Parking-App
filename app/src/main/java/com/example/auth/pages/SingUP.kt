@@ -35,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -44,6 +45,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.auth.AuthManager
 import com.example.auth.R
 import com.example.exo2.Destination
 
@@ -52,6 +54,7 @@ fun DisplaySignUP(navController: NavHostController){
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var pwd by remember { mutableStateOf("") }
+    val context = LocalContext.current
     Column (
         modifier = Modifier
             .padding(10.dp)
@@ -173,7 +176,14 @@ fun DisplaySignUP(navController: NavHostController){
                     .fillMaxWidth(1f),
                 verticalArrangement = Arrangement.Center
             ){
-                Button(onClick = { navController.navigate(Destination.ParkingList.route) },
+                Button( onClick = {
+                    if (name.isNotEmpty() && email.isNotEmpty() && pwd.isNotEmpty()) {
+                        AuthManager.createUser(context, name, email, pwd)
+                        navController.navigate(Destination.ParkingList.route)
+                    } else {
+                        // Gérez le cas où les champs ne sont pas remplis
+                    }
+                },
                     shape = RoundedCornerShape(30.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF773FFF)),
                     modifier = Modifier
