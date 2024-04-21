@@ -21,6 +21,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -100,14 +101,21 @@ fun DisplayMesReservation(parks:List<Parking>, navController: NavHostController)
                         contentDescription = null,
                     )
                 }*/
-                Button(
+                IconButton(
+                    modifier = Modifier
+                        .scale(.8f)
+                        .border(width = 1.dp, color = Color.LightGray, shape = CircleShape)
+                        .background(Color.White, shape = CircleShape),
                     onClick = {
                         AuthManager.clearCredentials(context)
-
                         navController.navigate(Destination.ParkingList.route)
                     }
                 ) {
-                    Text(text = "Déconnexion")
+                    Icon(
+                        imageVector = Icons.Default.ExitToApp,
+                        contentDescription = "Déconnexion",
+                        tint = Color.Red
+                    )
                 }
             }
             Column (
