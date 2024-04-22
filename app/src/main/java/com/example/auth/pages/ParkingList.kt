@@ -48,6 +48,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.TextUnit
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import com.example.auth.Parking
 import com.example.auth.R
 
 
@@ -71,7 +72,7 @@ fun TextWithIcon(text:String, fontSize:TextUnit,color:Color ,Icon:ImageVector, i
 }
 
 @Composable
-fun ParkingList(parks:List<Parking>, navController: NavHostController)
+fun ParkingList(parks:List<Parking>?, navController: NavHostController)
 
 {
 
@@ -94,7 +95,7 @@ fun ParkingList(parks:List<Parking>, navController: NavHostController)
                     .scale(.8f)
                     .border(width = 1.dp, color = Color.LightGray, shape = CircleShape)
                     .background(Color.White, shape = CircleShape),
-                onClick = {  }
+                onClick = { navController.popBackStack() }
             ) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
@@ -121,6 +122,7 @@ fun ParkingList(parks:List<Parking>, navController: NavHostController)
                 )
             }
         }
+        if(parks?.size!! >0)
         LazyColumn (
             modifier =  Modifier.padding(5.dp)
         ) {

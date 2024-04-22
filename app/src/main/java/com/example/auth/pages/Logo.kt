@@ -75,7 +75,9 @@ fun firstPage(navController:NavHostController){
 
         LaunchedEffect(navController) {
             delay(2000)
-            navController.navigate(Destination.ParkingList.route)
+            navController.navigate(Destination.ParkingList.route,   builder = {
+                popUpTo(navController.currentDestination?.id ?: -1) { inclusive = true }
+            })
         }
 
     }

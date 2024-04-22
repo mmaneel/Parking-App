@@ -70,7 +70,7 @@ fun DisplaySignIn(navController: NavHostController){
     val isLoggedIn = AuthManager.isLoggedIn(context)
     LaunchedEffect(Unit) {
         if (isLoggedIn) {
-            navController.navigate(Destination.MesReservation.route)
+            //navController.navigate(Destination.ParkingList.route)
         }
     }
 
@@ -178,7 +178,7 @@ fun DisplaySignIn(navController: NavHostController){
                     onClick = {
                         if (email.isNotEmpty() && password.isNotEmpty()) {
                             AuthManager.saveCredentials(context, email, password)
-                            navController.navigate(Destination.MesReservation.route)
+                            navController.popBackStack()
                         }
                     },
                     shape = RoundedCornerShape(30.dp),
