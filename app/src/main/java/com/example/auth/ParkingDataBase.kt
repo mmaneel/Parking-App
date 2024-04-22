@@ -16,11 +16,15 @@ abstract class ParkingDatabase: RoomDatabase() {
     companion object {
         private var INSTANCE: ParkingDatabase? = null
         fun getDatabase(context: Context): ParkingDatabase? {
-            if (INSTANCE == null) {
-                INSTANCE =
-                    Room.databaseBuilder(context,ParkingDatabase::class.java,
-                        "parking_db").build() }
-            return INSTANCE
+            synchronized(this) {
+                var instance = INSTANCE
+                if (instance == null) {
+                    instance = Room.databaseBuilder(context,ParkingDatabase::class.java,
+                            "parking_db").build()
+                    INSTANCE = instance
+                }
+                return INSTANCE
+            }
         }
     }
 }
