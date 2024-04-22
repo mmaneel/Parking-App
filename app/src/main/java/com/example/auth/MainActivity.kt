@@ -9,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -27,6 +28,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.auth.pages.DisplayMesReservation
+import com.example.auth.pages.DisplayParkingSlot
 import com.example.auth.pages.DisplayProfile
 import com.example.auth.pages.DisplaySignIn
 import com.example.auth.pages.DisplaySignUP
@@ -104,6 +106,16 @@ Scaffold (
                                 contentDescription = "Mes Reservation"
                             )
                         })
+
+                    NavigationBarItem(label = { Text(text = "Slot") },
+                        selected = currentindex == Destination.ParkingSlot.route,
+                        onClick = { navController.navigate(Destination.ParkingSlot.route) },
+                        icon = {
+                            Icon(
+                                Icons.Default.ShoppingCart,
+                                contentDescription = "Slot"
+                            )
+                        })
                 }
 
             }
@@ -113,6 +125,7 @@ Scaffold (
         composable(Destination.Splash.route) { firstPage(navController)}
         composable(Destination.SignIn.route) { DisplaySignIn(navController) }
         composable(Destination.SignUp.route) { DisplaySignUP(navController) }
+        composable(Destination.ParkingSlot.route) { DisplayParkingSlot(navController) }
         composable(Destination.MesReservation.route) { DisplayMesReservation(parks= getData(),navController) }
         composable(Destination.Profile.route) { DisplayProfile(navController) }
         composable(Destination.ParkingList.route) { ParkingList(parks = getData(), navController) }

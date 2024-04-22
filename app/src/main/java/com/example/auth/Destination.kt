@@ -7,6 +7,7 @@ sealed class Destination(val route:String) {
     object SignIn:Destination("signIn")
     object SignUp:Destination("signUp")
     object ParkingList:Destination("parking_list")
+    object ParkingSlot:Destination("ParkingSlot")
     object ParkingDetails:Destination("parking_details/{parkingId}"){
         fun getRoute (id:Int) = "parking_details/$id"
     }
