@@ -27,6 +27,8 @@ import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -71,7 +73,6 @@ fun DisplayMesReservation(reservations:List<Reservation>?, navController: NavHos
     val isLoggedIn = AuthManager.isLoggedIn(context)
     if (isLoggedIn) {
         val exists = (reservations?.size?:0) >0
-        val email  = AuthManager.getEmail(context)
 
         Column (
             modifier = Modifier
@@ -262,7 +263,4 @@ fun DisplayMesReservation(reservations:List<Reservation>?, navController: NavHos
             navController.navigate(Destination.SignIn.route)
         }
     }
-
-
-
 }

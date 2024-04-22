@@ -60,7 +60,11 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
+<<<<<<< HEAD
     implementation("com.google.code.gson:gson:2.8.8")
+=======
+    implementation ("com.google.code.gson:gson:2.8.8")
+>>>>>>> 54daf616987132c308b4ddeebf34121720bfdef9
 
     implementation ("androidx.navigation:navigation-compose:2.7.7")
     testImplementation("junit:junit:4.13.2")

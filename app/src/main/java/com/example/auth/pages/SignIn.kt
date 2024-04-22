@@ -66,6 +66,7 @@ import com.example.exo2.Destination
 fun DisplaySignIn(navController: NavHostController){
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var errorMessage by remember { mutableStateOf("") }
     val context = LocalContext.current
     val isLoggedIn = AuthManager.isLoggedIn(context)
     LaunchedEffect(Unit) {
@@ -110,6 +111,13 @@ fun DisplaySignIn(navController: NavHostController){
                 color = Color(0xFF00000F)
             )*/
 
+        }
+        if (errorMessage.isNotEmpty()) {
+            Text(
+                text = errorMessage,
+                color = Color.Red,
+                modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp)
+            )
         }
         Column(
             modifier = Modifier
@@ -177,8 +185,15 @@ fun DisplaySignIn(navController: NavHostController){
                 Button(
                     onClick = {
                         if (email.isNotEmpty() && password.isNotEmpty()) {
-                            AuthManager.saveCredentials(context, email, password)
-                            navController.popBackStack()
+
+                            if (AuthManager.checkCredentials(email, password)) {
+                                AuthManager.saveCredentials(context, email, password)
+                                navController.navigate(Destination.MesReservation.route)
+                            } else {
+                                errorMessage = "Email or password is invalid"
+                            }
+                        } else {
+                            errorMessage = "Please enter email and password"
                         }
                     },
                     shape = RoundedCornerShape(30.dp),
