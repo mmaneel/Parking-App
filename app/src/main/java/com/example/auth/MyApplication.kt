@@ -1,6 +1,7 @@
 package com.example.auth
 
 import android.app.Application
+import com.example.auth.Repo.ParkingRepository
 import com.example.auth.Repo.ReservationRepository
 
 class MyApplication:Application() {
@@ -9,5 +10,7 @@ class MyApplication:Application() {
     private val reservationDao by lazy { dataBase!!.getReservationDao()  }
     val reservationRepository by lazy { ReservationRepository(reservationDao) }
 
+    private val endpoints by lazy {Endpoints.createEndpoint()}
+    val parkingRepository by lazy {ParkingRepository(endpoints)}
 
 }

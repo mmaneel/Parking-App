@@ -40,6 +40,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.ui.draw.scale
@@ -48,6 +49,9 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.TextUnit
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import coil.compose.AsyncImage
+import com.example.auth.BaseURL
+import com.example.auth.Model.ParkingModel
 import com.example.auth.Parking
 import com.example.auth.R
 
@@ -72,14 +76,22 @@ fun TextWithIcon(text:String, fontSize:TextUnit,color:Color ,Icon:ImageVector, i
 }
 
 @Composable
-fun ParkingList(parks:List<Parking>?, navController: NavHostController)
+fun ParkingList(parkingModel: ParkingModel, navController: NavHostController)
 
 {
 
     val context = LocalContext.current
 
+    if(parkingModel.parks.value.isEmpty())
+        parkingModel.getAllParks()
+
+    val parks = parkingModel.parks.value
+
     Column (
-        modifier = Modifier.background(Color(0xFFF6F6F6))
+        modifier = Modifier
+            .background(Color(0xFFF6F6F6))
+            .fillMaxHeight(),
+        horizontalAlignment = Alignment.CenterHorizontally
     ){
         Row(
             modifier = Modifier
@@ -122,7 +134,6 @@ fun ParkingList(parks:List<Parking>?, navController: NavHostController)
                 )
             }
         }
-        if(parks?.size!! >0)
         LazyColumn (
             modifier =  Modifier.padding(5.dp)
         ) {
@@ -137,7 +148,7 @@ fun ParkingList(parks:List<Parking>?, navController: NavHostController)
                         .clip(RoundedCornerShape(10.dp))
                         .background(color = Color.White)
                         .clickable {
-                           navController.navigate(Destination.ParkingDetails.getRoute(it.id))
+                            navController.navigate(Destination.ParkingDetails.getRoute(it.id))
                         },
 
                     )
@@ -149,11 +160,11 @@ fun ParkingList(parks:List<Parking>?, navController: NavHostController)
                             .padding(5.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        Image(
+                        AsyncImage(
+                            model = BaseURL + it.img,
                             modifier = Modifier
                                 .aspectRatio(1f)
                                 .clip(RoundedCornerShape(10.dp)),
-                            painter = painterResource(id = R.drawable.parking1),
                             contentDescription = "Parking Image",
                             contentScale = ContentScale.Crop,
                         )
@@ -217,5 +228,10 @@ fun ParkingList(parks:List<Parking>?, navController: NavHostController)
                 }
             }
         }
+
+        if(parkingModel.loading.value)
+            CircularProgressIndicator()
+        if(parkingModel.error.value)
+            Toast.makeText(context, "Une erreur est survenue", Toast.LENGTH_SHORT).show()
     }
 }

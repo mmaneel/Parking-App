@@ -16,6 +16,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.auth.Model.ParkingModel
 import com.example.auth.Model.ReservationModel
 import com.example.auth.pages.DisplayMesReservation
 import com.example.auth.pages.DisplayProfile
@@ -35,6 +36,10 @@ class MainActivity : ComponentActivity() {
         ReservationModel.Factory((application as MyApplication).reservationRepository)
     }
 
+    private val parkingModel: ParkingModel by viewModels {
+        ParkingModel.Factory((application as MyApplication).parkingRepository)
+    }
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,7 +52,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                     ParkingApp(navController = rememberNavController(), reservationModel)
+                     ParkingApp(navController = rememberNavController(), reservationModel, parkingModel)
                 }
             }
         }
@@ -58,7 +63,7 @@ class MainActivity : ComponentActivity() {
 @RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-fun ParkingApp(navController: NavHostController, reservationModel: ReservationModel)
+fun ParkingApp(navController: NavHostController, reservationModel: ReservationModel, parkingModel: ParkingModel)
 {
 
 
@@ -75,13 +80,13 @@ fun ParkingApp(navController: NavHostController, reservationModel: ReservationMo
         composable(Destination.Profile.route) {  NavScaffold(navController = navController) { DisplayProfile(navController) }}
         composable(Destination.ParkingList.route) {
             NavScaffold(navController = navController) {
-                ParkingList(getData(), navController)
+                ParkingList(parkingModel , navController)
             }
         }
         composable(Destination.ParkingDetails.route) {navBack->
             val id = navBack.arguments?.getString("parkingId")?.toInt()
             if(id != null)
-                ParkingDetails(id,navController, reservationModel)
+                ParkingDetails(id,navController, reservationModel, parkingModel)
 
     }
 
