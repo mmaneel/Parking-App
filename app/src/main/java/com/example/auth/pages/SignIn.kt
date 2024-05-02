@@ -56,6 +56,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.auth.AuthManager
+import com.example.auth.Model.AuthModel
 import com.example.auth.R
 import com.example.auth.R.drawable
 import com.example.auth.R.drawable.google
@@ -63,7 +64,7 @@ import com.example.exo2.Destination
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DisplaySignIn(navController: NavHostController){
+fun DisplaySignIn(navController: NavHostController, authModel: AuthModel){
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var errorMessage by remember { mutableStateOf("") }
@@ -185,12 +186,12 @@ fun DisplaySignIn(navController: NavHostController){
                 Button(
                     onClick = {
                         if (email.isNotEmpty() && password.isNotEmpty()) {
-
-                            if (AuthManager.checkCredentials(email, password)) {
-                                AuthManager.saveCredentials(context, email, password)
-                                navController.navigate(Destination.MesReservation.route)
-                            } else {
-                                errorMessage = "Email or password is invalid"
+                            authModel.login(email, password) { success, error ->
+                                if (success) {
+                                    navController.navigate(Destination.MesReservation.route)
+                                } else {
+                                    errorMessage = error ?: "Failed to register"
+                                }
                             }
                         } else {
                             errorMessage = "Please enter email and password"

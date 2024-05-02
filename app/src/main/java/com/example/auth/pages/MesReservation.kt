@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -24,17 +23,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -50,10 +45,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.auth.AuthManager
-import com.example.auth.Parking
-import com.example.auth.ParkingDatabase
 import com.example.auth.R
-import com.example.auth.data.Reservation
+import com.example.auth.Model.ReservationModel
 import com.example.exo2.Destination
 import com.example.exo2.TextWithIcon
 import kotlinx.coroutines.CoroutineScope
@@ -61,18 +54,19 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Composable
-fun DisplayMesReservation(reservations:List<Reservation>?, navController: NavHostController, db: ParkingDatabase?) {
+fun DisplayMesReservation(reservationModel: ReservationModel, navController: NavHostController) {
     val context = LocalContext.current
-    val dao = db?.getReservationDao()
     val logout = remember {
         mutableStateOf (false)
     }
 
+    reservationModel.getAllReservations()
+    val reservations = reservationModel.allReservations.value
 
     // Check login status
     val isLoggedIn = AuthManager.isLoggedIn(context)
     if (isLoggedIn) {
-        val exists = (reservations?.size?:0) >0
+        val exists = (reservations.size ?:0) >0
 
         Column (
             modifier = Modifier
@@ -131,7 +125,7 @@ fun DisplayMesReservation(reservations:List<Reservation>?, navController: NavHos
                     .padding(5.dp)
             ) {
                 if(exists)
-                 items(reservations!!) {
+                 items(reservations) {
                      Column (
                          modifier = Modifier
                              .fillMaxWidth()
@@ -235,7 +229,7 @@ fun DisplayMesReservation(reservations:List<Reservation>?, navController: NavHos
                                  ),
                                  onClick = {
                                      CoroutineScope(Dispatchers.IO).launch {
-                                         dao?.deleteReservation(reservation = it)
+                                         reservationModel.deleteReservation(reservation = it)
                                      }
                                  }) {
                                  Text(color = Color(0xFF7136ff), text = "Annuler")

@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -25,9 +24,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
@@ -37,6 +35,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,7 +43,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -53,17 +51,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.auth.AuthManager
-import com.example.auth.Parking
-import com.example.auth.ParkingDatabase
+import com.example.auth.Model.ParkingModel
 import com.example.auth.R
+import com.example.auth.Model.ReservationModel
+import com.example.auth.Parking
 import com.example.auth.data.Reservation
-import com.example.auth.getData
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.time.LocalDate
-import java.time.LocalTime
 import java.time.ZoneId
 import java.util.Date
 
@@ -71,11 +64,14 @@ import java.util.Date
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun ParkingDetails(id: Int, navController: NavHostController, db: ParkingDatabase?)
+fun ParkingDetails(id: Int, navController: NavHostController, reservationModel: ReservationModel, parkingModel: ParkingModel)
 {
-    val details = getData()[id]
+    val favoriteIcones = arrayOf(Icons.Default.FavoriteBorder, Icons.Default.Favorite)
+    val favorite = remember{ mutableStateOf(favoriteIcones[0]) }
 
-    val dao = db?.getReservationDao()
+    parkingModel.getPark(id)
+
+    val details = parkingModel.details.value
 
     val context = LocalContext.current
 
@@ -109,7 +105,7 @@ fun ParkingDetails(id: Int, navController: NavHostController, db: ParkingDatabas
                         Row(verticalAlignment = Alignment.Bottom) {
 
                             Text(
-                                text = "${details.price}DA",
+                                text = "${details?.price}DA",
                                 fontSize = 20.sp,
                                 color = Color(0xFF7136ff),
                             )
@@ -130,24 +126,23 @@ fun ParkingDetails(id: Int, navController: NavHostController, db: ParkingDatabas
                             containerColor = Color(0xFF7136ff)
                         ),
                         onClick = {
-                            val isLoggedIn = AuthManager.isLoggedIn(context)
-                            if (isLoggedIn) {
-                                val currentDate = Date.from(
-                                    LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()
-                                )
-                                CoroutineScope(Dispatchers.IO).launch {
+                            if(details != null)
+                            {
+                                val isLoggedIn = AuthManager.isLoggedIn(context)
+                                if (isLoggedIn) {
+                                    val currentDate = Date.from(
+                                        LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()
+                                    )
                                     val reservation = Reservation(
                                         parking = details,
                                         reservationTime = currentDate
                                     )
-                                    dao?.addReservations(reservation)
-                                    withContext(Dispatchers.Main){
-                                        navController.navigate(Destination.MesReservation.route)
-                                    }
-                                }
+                                    reservationModel.addReservation(reservation)
+                                    navController.navigate(Destination.MesReservation.route)
 
-                            } else {
-                                navController.navigate(Destination.SignIn.route)
+                                } else {
+                                    navController.navigate(Destination.SignIn.route)
+                                }
                             }
                         }
                     ) {
@@ -215,10 +210,16 @@ fun ParkingDetails(id: Int, navController: NavHostController, db: ParkingDatabas
                                         shape = CircleShape
                                     )
                                     .background(Color.White, shape = CircleShape),
-                                onClick = { }
+                                onClick = {
+                                    if(favorite.value == favoriteIcones[0])
+                                        favorite.value = favoriteIcones[1]
+                                    else
+                                        favorite.value = favoriteIcones[0]
+                                }
                             ) {
                                 Icon(
-                                    imageVector = Icons.Default.FavoriteBorder,
+                                    imageVector = favorite.value,
+                                    tint = Color(0xFF7136ff),
                                     contentDescription = null,
                                 )
                             }
@@ -264,7 +265,7 @@ fun ParkingDetails(id: Int, navController: NavHostController, db: ParkingDatabas
                         Spacer(modifier = Modifier.height(10.dp))
 
                         Text(
-                            text = details.name,
+                            text = details?.name ?: "Parking",
                             fontSize = 30.sp,
                             fontWeight = FontWeight.Bold,
                         )
@@ -272,7 +273,7 @@ fun ParkingDetails(id: Int, navController: NavHostController, db: ParkingDatabas
                         Spacer(modifier = Modifier.height(8.dp))
 
                         Text(
-                            text = details.adress,
+                            text = details?.adress ?: "adress",
                             fontSize = 15.sp,
                             color = Color.Gray,
                         )
@@ -317,7 +318,7 @@ fun ParkingDetails(id: Int, navController: NavHostController, db: ParkingDatabas
                                 )
 
                                 Text(
-                                    text = "${details.emptyBlocks} blocks disponibles",
+                                    text = "${details?.emptyBlocks} blocks disponibles",
                                     fontSize = 15.sp,
                                     color = Color.Black,
                                 )
@@ -337,7 +338,7 @@ fun ParkingDetails(id: Int, navController: NavHostController, db: ParkingDatabas
                             Spacer(modifier = Modifier.height(10.dp))
 
                             Text(
-                                text = details.description,
+                                text = details?.description ?: "Parking introvable",
                                 fontSize = 15.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = Color.Gray,

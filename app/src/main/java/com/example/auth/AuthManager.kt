@@ -80,7 +80,6 @@ object AuthManager {
 
 
 
-    // Obtient l'e-mail enregistré
     fun getEmail(context: Context): String? {
         val sharedPreferences = getSharedPreferences(context)
         return sharedPreferences.getString(KEY_EMAIL, null)
