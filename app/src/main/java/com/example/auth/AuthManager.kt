@@ -81,13 +81,13 @@ object AuthManager {
 
 
     // Obtient l'e-mail enregistré
-    /*fun getEmail(context: Context): String? {
+    fun getEmail(context: Context): String? {
         val sharedPreferences = getSharedPreferences(context)
         return sharedPreferences.getString(KEY_EMAIL, null)
     }
 
     // Obtient le mot de passe enregistré
-    fun getPassword(context: Context): String? {
+    /*fun getPassword(context: Context): String? {
         val sharedPreferences = getSharedPreferences(context)
         return sharedPreferences.getString(KEY_PASSWORD, null)
     }*/

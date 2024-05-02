@@ -1,9 +1,10 @@
-package com.example.exo2
-
-
+package com.example.auth
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
 
 data class Parking(
+
     val id: Int,
     val name: String,
     val emptyBlocks : Int,
@@ -11,15 +12,16 @@ data class Parking(
     val price : Int,
     val adress: String,
     val description: String
+
 )
 
 
 fun getData():List<Parking>{
-    val dogs = ArrayList<Parking>()
+    val parks = ArrayList<Parking>()
     for(i in 0..29) {
-        dogs.add(Parking(i, Names[i],5,"${cities[i]}, Algerie", 2000, addresses[i], "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Harum laborum expedita consectetur aliquam id laudantium possimus tempora facilis vero dolores eum rem sapiente quaerat nostrum quibusdam atque dolorem incidunt accusamus, recusandae animi optio, quia soluta. Voluptate non quibusdam, minus qui dolorum sapiente placeat adipisci molestias veniam blanditiis alias, aut rerum!"))
+        parks.add(Parking(i, Names[i],5,"${cities[i]}, Algerie", 200, addresses[i], "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Harum laborum expedita consectetur aliquam id laudantium possimus tempora facilis vero dolores eum rem sapiente quaerat nostrum quibusdam atque dolorem incidunt accusamus, recusandae animi optio, quia soluta. Voluptate non quibusdam, minus qui dolorum sapiente placeat adipisci molestias veniam blanditiis alias, aut rerum!"))
     }
-    return dogs
+    return parks
 }
 
 

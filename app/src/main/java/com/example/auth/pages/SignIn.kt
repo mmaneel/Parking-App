@@ -71,7 +71,7 @@ fun DisplaySignIn(navController: NavHostController){
     val isLoggedIn = AuthManager.isLoggedIn(context)
     LaunchedEffect(Unit) {
         if (isLoggedIn) {
-            navController.navigate(Destination.MesReservation.route)
+            //navController.navigate(Destination.ParkingList.route)
         }
     }
 
