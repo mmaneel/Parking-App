@@ -25,7 +25,8 @@ private val DarkColorScheme = darkColorScheme(
 private val LightColorScheme = lightColorScheme(
     primary = Color(0xFF7136ff),
     secondary = PurpleGrey40,
-    tertiary = Pink40
+    tertiary = Pink40 ,
+    background = Color.White,
 
     /* Other default colors to override
     background = Color(0xFFFFFBFE),
@@ -40,7 +41,7 @@ private val LightColorScheme = lightColorScheme(
 
 @Composable
 fun AuthTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    darkTheme: Boolean = false,
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit
@@ -58,7 +59,7 @@ fun AuthTheme(
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.primary.toArgb()
+            window.statusBarColor = colorScheme.background.toArgb()
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
         }
     }

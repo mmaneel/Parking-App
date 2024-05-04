@@ -57,6 +57,7 @@ import com.example.auth.Model.ReservationModel
 import com.example.auth.Parking
 import com.example.auth.data.Reservation
 import java.time.LocalDate
+import java.time.LocalTime
 import java.time.ZoneId
 import java.util.Date
 
@@ -131,8 +132,11 @@ fun ParkingDetails(id: Int, navController: NavHostController, reservationModel: 
                                 val isLoggedIn = AuthManager.isLoggedIn(context)
                                 if (isLoggedIn) {
                                     val currentDate = Date.from(
-                                        LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()
-                                    )
+                                                                LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()
+                                                            )
+                                    currentDate.hours = LocalTime.now().hour
+                                    currentDate.minutes = LocalTime.now().minute
+
                                     val reservation = Reservation(
                                         parking = details,
                                         reservationTime = currentDate

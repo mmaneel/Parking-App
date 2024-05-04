@@ -1,5 +1,7 @@
 package com.example.auth.pages
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -21,6 +23,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.Button
@@ -52,7 +55,11 @@ import com.example.exo2.TextWithIcon
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.LocalTime
+import java.util.Date
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DisplayMesReservation(reservationModel: ReservationModel, navController: NavHostController) {
     val context = LocalContext.current
@@ -187,10 +194,10 @@ fun DisplayMesReservation(reservationModel: ReservationModel, navController: Nav
                                  )
 
                                  TextWithIcon(
-                                     text = it.parking.city,
+                                     text = formatTime(it.reservationTime),
                                      fontSize = 15.sp,
                                      color = Color.Gray,
-                                     Icon = Icons.Default.LocationOn
+                                     Icon = Icons.Default.DateRange
                                  )
 
                                  Spacer(modifier = Modifier.height(10.dp))
@@ -257,4 +264,20 @@ fun DisplayMesReservation(reservationModel: ReservationModel, navController: Nav
             navController.navigate(Destination.SignIn.route)
         }
     }
+}
+
+
+
+@RequiresApi(Build.VERSION_CODES.O)
+fun formatTime(localDate: Date):String
+{
+    val day = localDate.date
+    val month = localDate.month+1
+    val year = localDate.year + 1900
+
+    val hour = if(localDate.hours in 0..9)  "0${localDate.hours}" else "${localDate.hours}"
+    val minutes = if(localDate.minutes in 0..9)  "0${localDate.minutes}" else "${localDate.minutes}"
+
+    return "${day}/${month}/${year} " +
+            "à ${hour}:${minutes}"
 }

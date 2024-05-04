@@ -8,9 +8,10 @@ class MyApplication:Application() {
 
     private val dataBase by lazy { ParkingDatabase.getDatabase(this) }
     private val reservationDao by lazy { dataBase!!.getReservationDao()  }
-    val reservationRepository by lazy { ReservationRepository(reservationDao) }
-
     private val endpoints by lazy {Endpoints.createEndpoint()}
+
+
+    val reservationRepository by lazy { ReservationRepository(reservationDao, endpoints) }
     val parkingRepository by lazy {ParkingRepository(endpoints)}
 
 }

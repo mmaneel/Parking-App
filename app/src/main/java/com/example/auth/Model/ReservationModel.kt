@@ -14,6 +14,8 @@ class ReservationModel (private val reservationRepository: ReservationRepository
 
     var allReservations = mutableStateOf(listOf<Reservation>())
 
+    val error = mutableStateOf(false)
+
     fun getAllReservations() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
@@ -26,7 +28,13 @@ class ReservationModel (private val reservationRepository: ReservationRepository
     {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                reservationRepository.addReservations(reservation)
+
+                val success =  reservationRepository.addReservations(reservation)
+                if(!success){
+                    error.value = true
+                }
+
+
             }
         }
     }
