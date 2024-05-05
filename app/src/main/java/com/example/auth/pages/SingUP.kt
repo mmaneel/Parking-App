@@ -27,6 +27,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,15 +47,25 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.auth.AuthManager
+import com.example.auth.Model.AuthModel
 import com.example.auth.R
 import com.example.exo2.Destination
 
 @Composable
-fun DisplaySignUP(navController: NavHostController){
+fun DisplaySignUP(navController: NavHostController, authModel: AuthModel){
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var pwd by remember { mutableStateOf("") }
+    var errorMessage by remember { mutableStateOf("") }
     val context = LocalContext.current
+
+    val isLoggedIn = AuthManager.isLoggedIn(context)
+    LaunchedEffect(Unit) {
+        if (isLoggedIn) {
+            navController.navigate(Destination.ParkingList.route)
+        }
+    }
+
     Column (
         modifier = Modifier
             .padding(10.dp)
@@ -178,10 +189,15 @@ fun DisplaySignUP(navController: NavHostController){
             ){
                 Button( onClick = {
                     if (name.isNotEmpty() && email.isNotEmpty() && pwd.isNotEmpty()) {
-                        AuthManager.createUser(context, name, email, pwd)
-                        navController.navigate(Destination.ParkingList.route)
+                        authModel.register(name, email, pwd) { success, error ->
+                            if (success) {
+                                navController.navigate(Destination.MesReservation.route)
+                            } else {
+                                errorMessage = error ?: "Failed to register"
+                            }
+                        }
                     } else {
-                        // Gérez le cas où les champs ne sont pas remplis
+                        errorMessage = "Please fill in all fields"
                     }
                 },
                     shape = RoundedCornerShape(30.dp),

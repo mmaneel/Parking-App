@@ -47,7 +47,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import coil.compose.AsyncImage
 import com.example.auth.AuthManager
+import com.example.auth.BaseURL
 import com.example.auth.R
 import com.example.auth.Model.ReservationModel
 import com.example.exo2.Destination
@@ -78,7 +80,8 @@ fun DisplayMesReservation(reservationModel: ReservationModel, navController: Nav
         Column (
             modifier = Modifier
                 .background(Color(0xFFF6F6F6))
-                .fillMaxHeight()
+                .fillMaxHeight(),
+            horizontalAlignment = Alignment.CenterHorizontally
         ){
             Row(
                 modifier = Modifier
@@ -126,6 +129,16 @@ fun DisplayMesReservation(reservationModel: ReservationModel, navController: Nav
                 }
             }
 
+            if(reservations.isEmpty())
+                Text(
+                    text = "+ Reserver dans un parking",
+                    color = Color(0x770000FF),
+                    modifier = Modifier
+                        .clickable {
+                            navController.navigate(Destination.ParkingList.route)
+                        }
+                )
+
 
             LazyColumn (
                 modifier =  Modifier
@@ -156,13 +169,14 @@ fun DisplayMesReservation(reservationModel: ReservationModel, navController: Nav
                                      .padding(5.dp),
                                  contentAlignment = Alignment.Center
                              ) {
-                                 Image(
+                                 AsyncImage(
+                                     model = BaseURL + it.parking.img,
                                      modifier = Modifier
                                          .aspectRatio(1f)
                                          .clip(RoundedCornerShape(10.dp)),
-                                     painter = painterResource(id = R.drawable.parking1),
                                      contentDescription = "Parking Image",
                                      contentScale = ContentScale.Crop,
+                                     placeholder = painterResource(id = R.drawable.parking_ph)
                                  )
                              }
 

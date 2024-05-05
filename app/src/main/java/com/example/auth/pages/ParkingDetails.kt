@@ -50,7 +50,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import coil.compose.AsyncImage
 import com.example.auth.AuthManager
+import com.example.auth.BaseURL
 import com.example.auth.Model.ParkingModel
 import com.example.auth.R
 import com.example.auth.Model.ReservationModel
@@ -169,14 +171,16 @@ fun ParkingDetails(id: Int, navController: NavHostController, reservationModel: 
                     )
                     {
 
-                        Image(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(350.dp),
-                            painter = painterResource(id = R.drawable.parking1),
-                            contentDescription = "Parking Image",
-                            contentScale = ContentScale.Crop,
-                        )
+                        if (details != null) {
+                            AsyncImage(
+                                model = BaseURL + details.img,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(350.dp),
+                                contentDescription = "Parking Image",
+                                contentScale = ContentScale.Crop,
+                            )
+                        }
 
                         Row(
                             modifier = Modifier

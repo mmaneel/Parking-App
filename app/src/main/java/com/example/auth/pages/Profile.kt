@@ -39,15 +39,15 @@ fun DisplayProfile(navController: NavHostController) {
     // Check login status
     val isLoggedIn = AuthManager.isLoggedIn(context)
     if (isLoggedIn) {
-        val email  = AuthManager.getEmail(context)
+        val username  = AuthManager.getUserName(context)
         Column(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
 
-            if (email != null) {
-                Text(text = email)
+            if (username != null) {
+                Text(text = username)
             }
             Button(
                 onClick = {

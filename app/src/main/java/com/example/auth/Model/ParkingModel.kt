@@ -16,11 +16,14 @@ class ParkingModel (private val parkingRepo : ParkingRepository) : ViewModel(){
     val details = mutableStateOf<Parking?>(null)
 
     val loading = mutableStateOf(false)
-    val error = mutableStateOf(false)
+    val error =  mutableStateOf("")
+
+
 
     fun getAllParks(){
         loading.value = true
         viewModelScope.launch {
+
             withContext(Dispatchers.IO) {
                 val response =  parkingRepo.getAllParks()
                 if(response.isSuccessful){
@@ -28,12 +31,14 @@ class ParkingModel (private val parkingRepo : ParkingRepository) : ViewModel(){
                     if(data != null)
                         parks.value = data
                     }
-                    else{
-                            error.value = true
-                    }
-                    loading.value = false
+                else{
+                        error.value = "impossible de récupérer les données"
+                }
+
             }
+            loading.value = false
         }
+
     }
 
 
@@ -48,7 +53,7 @@ class ParkingModel (private val parkingRepo : ParkingRepository) : ViewModel(){
                         details.value = data
                 }
                 else{
-                    error.value = true
+                    error.value = "impossible de récupérer les données"
                 }
                 loading.value = false
             }

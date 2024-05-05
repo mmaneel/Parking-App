@@ -9,7 +9,7 @@ import java.util.Date
 data class Reservation(
 
     @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
+    var id: Int = 0,
     val parking:Parking,
     val reservationTime : Date
 

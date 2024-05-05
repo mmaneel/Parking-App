@@ -82,7 +82,7 @@ fun ParkingList(parkingModel: ParkingModel, navController: NavHostController)
 
     val context = LocalContext.current
 
-    if(parkingModel.parks.value.isEmpty())
+    if(parkingModel.parks.value.isEmpty() && parkingModel.error.value.isEmpty())
         parkingModel.getAllParks()
 
     val parks = parkingModel.parks.value
@@ -134,6 +134,14 @@ fun ParkingList(parkingModel: ParkingModel, navController: NavHostController)
                 )
             }
         }
+
+        //Displayed if no parks were found
+        if(parks.isEmpty())
+            Text(
+                text = "Aucun parking trouvé",
+                color = Color.Gray
+            )
+
         LazyColumn (
             modifier =  Modifier.padding(5.dp)
         ) {
@@ -167,6 +175,7 @@ fun ParkingList(parkingModel: ParkingModel, navController: NavHostController)
                                 .clip(RoundedCornerShape(10.dp)),
                             contentDescription = "Parking Image",
                             contentScale = ContentScale.Crop,
+                            placeholder = painterResource(id = R.drawable.parking_ph)
                         )
                     }
 
@@ -231,7 +240,9 @@ fun ParkingList(parkingModel: ParkingModel, navController: NavHostController)
 
         if(parkingModel.loading.value)
             CircularProgressIndicator()
-        if(parkingModel.error.value)
-            Toast.makeText(context, "Une erreur est survenue", Toast.LENGTH_SHORT).show()
+        if(parkingModel.error.value.isNotEmpty()){
+            Toast.makeText(context, parkingModel.error.value, Toast.LENGTH_SHORT).show()
+        }
+
     }
 }
