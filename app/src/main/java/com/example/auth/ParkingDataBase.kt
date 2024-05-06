@@ -8,7 +8,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.auth.data.Reservation
 
-@Database(entities = [Reservation::class],version = 2)
+@Database(entities = [Reservation::class],version = 3)
 @TypeConverters(Converters::class)
 abstract class ParkingDatabase: RoomDatabase() {
     abstract fun getReservationDao():ReservationDao
@@ -20,7 +20,7 @@ abstract class ParkingDatabase: RoomDatabase() {
                 var instance = INSTANCE
                 if (instance == null) {
                     instance = Room.databaseBuilder(context,ParkingDatabase::class.java,
-                            "parking_db").build()
+                            "parking_db").fallbackToDestructiveMigration().build()
                     INSTANCE = instance
                 }
                 return INSTANCE

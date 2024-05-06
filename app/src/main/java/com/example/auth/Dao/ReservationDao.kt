@@ -14,8 +14,8 @@ interface ReservationDao {
     fun addReservations(vararg reservation: Reservation)
 
 
-    @Query("select * from reservations")
-    fun getReservations():List<Reservation>
+    @Query("select * from reservations where userId= :userId")
+    fun getReservations(userId: Int):List<Reservation>
 
     @Query("select * from reservations where reservationTime = :date")
     fun getReservationsByDate(date: Date):List<Reservation>

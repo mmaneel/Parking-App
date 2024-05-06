@@ -1,9 +1,12 @@
 package com.example.auth.Model
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.example.auth.AuthManager
 import com.example.auth.Repo.ReservationRepository
 import com.example.auth.data.Reservation
 import kotlinx.coroutines.Dispatchers
@@ -16,16 +19,17 @@ class ReservationModel (private val reservationRepository: ReservationRepository
 
     val error = mutableStateOf(false)
 
-    fun getAllReservations() {
+    fun getAllReservations(context: Context) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                allReservations.value = reservationRepository.getReservations()
+                allReservations.value = reservationRepository.getReservations(AuthManager.getUserId(context))
             }
         }
     }
 
-    fun addReservation(reservation: Reservation)
+    fun addReservation(reservation: Reservation, context: Context)
     {
+        val userId = AuthManager.getUserId(context);
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
 
@@ -39,11 +43,11 @@ class ReservationModel (private val reservationRepository: ReservationRepository
         }
     }
 
-    fun deleteReservation(reservation: Reservation) {
+    fun deleteReservation(reservation: Reservation,context : Context) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 reservationRepository.deleteReservation(reservation)
-                getAllReservations()
+                getAllReservations(context)
             }
         }
     }

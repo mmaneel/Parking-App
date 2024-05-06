@@ -28,7 +28,8 @@ class AuthModel(private val authRepository: AuthRepository ) :ViewModel(){
                     val responseData = response.body()?.string()
                     val token = responseData?.let { JSONObject(it).getString("token") }
                     val username = responseData?.let { JSONObject(it).getString("username") }
-                    AuthManager.saveCredentials(context, token, username)
+                    val userId = responseData?.let { JSONObject(it).getInt("id") }
+                    AuthManager.saveCredentials(context, token, username,userId)
 
                     launch(Dispatchers.Main) {
                         onComplete(true, null)

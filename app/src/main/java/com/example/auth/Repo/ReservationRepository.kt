@@ -22,7 +22,7 @@ class ReservationRepository(private val resDao: ReservationDao, private val endp
     }
 
 
-    fun getReservations() = resDao.getReservations()
+    fun getReservations(userId : Int) = resDao.getReservations(userId)
 
     fun getReservationsByDate(date: Date) = resDao.getReservationsByDate(date)
 

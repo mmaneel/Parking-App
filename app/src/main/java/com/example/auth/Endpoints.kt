@@ -12,6 +12,7 @@ import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
+import java.util.Date
 
 interface Endpoints {
 
@@ -39,7 +40,7 @@ interface Endpoints {
 
 
     @POST("reservation")
-    suspend fun  createReservation(@Body reservation: Reservation) : Response<ResponseBody>
+    suspend fun  createReservation(@Body reservation: Reservation): Response<ResponseBody>
 
     @DELETE("reservation/{id}")
     suspend fun deleteReservation(@Path("id") id: Int): Response<Void>

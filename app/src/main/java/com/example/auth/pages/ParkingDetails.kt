@@ -141,9 +141,10 @@ fun ParkingDetails(id: Int, navController: NavHostController, reservationModel: 
 
                                     val reservation = Reservation(
                                         parking = details,
-                                        reservationTime = currentDate
+                                        reservationTime = currentDate,
+                                        userId = AuthManager.getUserId(context)
                                     )
-                                    reservationModel.addReservation(reservation)
+                                    reservationModel.addReservation(reservation, context)
                                     navController.navigate(Destination.MesReservation.route)
 
                                 } else {

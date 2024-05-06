@@ -69,7 +69,7 @@ fun DisplayMesReservation(reservationModel: ReservationModel, navController: Nav
         mutableStateOf (false)
     }
 
-    reservationModel.getAllReservations()
+    reservationModel.getAllReservations(context)
     val reservations = reservationModel.allReservations.value
 
     // Check login status
@@ -250,7 +250,7 @@ fun DisplayMesReservation(reservationModel: ReservationModel, navController: Nav
                                  ),
                                  onClick = {
                                      CoroutineScope(Dispatchers.IO).launch {
-                                         reservationModel.deleteReservation(reservation = it)
+                                         reservationModel.deleteReservation(reservation = it, context)
                                      }
                                  }) {
                                  Text(color = Color(0xFF7136ff), text = "Annuler")
@@ -278,7 +278,9 @@ fun DisplayMesReservation(reservationModel: ReservationModel, navController: Nav
             navController.navigate(Destination.SignIn.route)
         }
     }
+
 }
+
 
 
 
