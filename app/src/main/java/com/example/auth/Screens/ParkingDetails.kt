@@ -3,7 +3,6 @@ package com.example.exo2
 import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -30,6 +29,7 @@ import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DatePicker
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -52,11 +52,11 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.auth.AuthManager
-import com.example.auth.BaseURL
-import com.example.auth.Model.ParkingModel
+import com.example.auth.DateTimePicker
+import com.example.auth.IMAGE_URL
+import com.example.auth.ViewModels.ParkingModel
 import com.example.auth.R
-import com.example.auth.Model.ReservationModel
-import com.example.auth.Parking
+import com.example.auth.ViewModels.ReservationModel
 import com.example.auth.data.Reservation
 import java.time.LocalDate
 import java.time.LocalTime
@@ -75,6 +75,10 @@ fun ParkingDetails(id: Int, navController: NavHostController, reservationModel: 
     parkingModel.getPark(id)
 
     val details = parkingModel.details.value
+
+    val pickingDate = remember {
+        mutableStateOf(false);
+    }
 
     val context = LocalContext.current
 
@@ -121,6 +125,28 @@ fun ParkingDetails(id: Int, navController: NavHostController, reservationModel: 
                         }
                     }
 
+                    if(pickingDate.value)
+                        DateTimePicker(context) { result ->
+                            val currentDate = Date.from(
+                                LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()
+                            )
+                            currentDate.hours = LocalTime.now().hour
+                            currentDate.minutes = LocalTime.now().minute
+
+                            val reservation = Reservation(
+                                parking = details!!,
+                                arrivalTime = result,
+                                duration = 1,
+                                userId = AuthManager.getUserId(context),
+                                payee = false,
+                            )
+
+                            reservationModel.addReservation(reservation) { id ->
+                                navController.navigate(Destination.Payment.getRoute(id))
+                            }
+
+                        }
+
                     Button(
                         modifier = Modifier
                             .fillMaxHeight()
@@ -133,19 +159,7 @@ fun ParkingDetails(id: Int, navController: NavHostController, reservationModel: 
                             {
                                 val isLoggedIn = AuthManager.isLoggedIn(context)
                                 if (isLoggedIn) {
-                                    val currentDate = Date.from(
-                                                                LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()
-                                                            )
-                                    currentDate.hours = LocalTime.now().hour
-                                    currentDate.minutes = LocalTime.now().minute
-
-                                    val reservation = Reservation(
-                                        parking = details,
-                                        reservationTime = currentDate,
-                                        userId = AuthManager.getUserId(context)
-                                    )
-                                    reservationModel.addReservation(reservation, context)
-                                    navController.navigate(Destination.MesReservation.route)
+                                    pickingDate.value = true;
 
                                 } else {
                                     navController.navigate(Destination.SignIn.route)
@@ -174,7 +188,7 @@ fun ParkingDetails(id: Int, navController: NavHostController, reservationModel: 
 
                         if (details != null) {
                             AsyncImage(
-                                model = BaseURL + details.img,
+                                model = IMAGE_URL + details.img,
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .height(350.dp),

@@ -1,5 +1,7 @@
-package com.example.auth
+package com.example.auth.Retrofit
 
+import com.example.auth.BaseURL
+import com.example.auth.Parking
 import com.example.auth.data.Reservation
 import okhttp3.ResponseBody
 import retrofit2.Response
@@ -11,13 +13,14 @@ import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
-import java.util.Date
+import retrofit2.http.Query
 
 interface Endpoints {
 
     @GET("parking")
-    suspend fun getAllParks(): Response<List<Parking>>
+    suspend fun getAllParks(@Query("limit") limit: Int): Response<List<Parking>>
 
 
     @GET("parking/{id}")
@@ -44,6 +47,13 @@ interface Endpoints {
 
     @DELETE("reservation/{id}")
     suspend fun deleteReservation(@Path("id") id: Int): Response<Void>
+
+    @PUT("reservation")
+    @FormUrlEncoded
+    suspend fun payReservation(
+        @Field("id") id: Int,
+        @Field("duration") duration: Int
+    ): Response<ResponseBody>
 
 
     companion object {

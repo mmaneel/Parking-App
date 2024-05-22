@@ -1,12 +1,12 @@
-package com.example.auth.Model
+package com.example.auth.ViewModels
 
 import android.content.Context
-import android.widget.Toast
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.auth.AuthManager
+import com.example.auth.Parking
 import com.example.auth.Repo.ReservationRepository
 import com.example.auth.data.Reservation
 import kotlinx.coroutines.Dispatchers
@@ -16,6 +16,8 @@ import kotlinx.coroutines.withContext
 class ReservationModel (private val reservationRepository: ReservationRepository): ViewModel() {
 
     var allReservations = mutableStateOf(listOf<Reservation>())
+
+    val details = mutableStateOf<Reservation?>(null)
 
     val error = mutableStateOf(false)
 
@@ -27,18 +29,42 @@ class ReservationModel (private val reservationRepository: ReservationRepository
         }
     }
 
-    fun addReservation(reservation: Reservation, context: Context)
-    {
-        val userId = AuthManager.getUserId(context);
+
+    fun getReservations(id: Int, context: Context) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
+                details.value = reservationRepository.getReservation(id)
+            }
+        }
+    }
 
-                val success =  reservationRepository.addReservations(reservation)
+
+    fun payReservation (id: Int,duration: Int, context: Context){
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                val success =  reservationRepository.payReservation(duration ,id)
                 if(!success){
                     error.value = true
                 }
 
+            }
+        }
+    }
 
+    fun addReservation(reservation: Reservation, callback: (Int) -> Unit)
+    {
+        var id:Int? = null
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+
+                id =  reservationRepository.addReservations(reservation)
+                if(id == null){
+                    error.value = true
+                }else{
+                    withContext(Dispatchers.Main) {
+                        callback(id!!)
+                    }
+                }
             }
         }
     }

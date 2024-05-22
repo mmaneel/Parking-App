@@ -1,4 +1,4 @@
-package com.example.auth.pages
+package com.example.auth.Screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -25,7 +25,6 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -47,12 +46,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.auth.AuthManager
-import com.example.auth.Model.AuthModel
+import com.example.auth.ViewModels.AuthVIewModel
 import com.example.auth.R
 import com.example.exo2.Destination
 
 @Composable
-fun DisplaySignUP(navController: NavHostController, authModel: AuthModel){
+fun DisplaySignUP(navController: NavHostController, authModel: AuthVIewModel){
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var pwd by remember { mutableStateOf("") }

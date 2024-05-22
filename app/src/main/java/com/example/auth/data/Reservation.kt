@@ -11,7 +11,9 @@ data class Reservation(
     @PrimaryKey(autoGenerate = true)
     var id: Int = 0,
     val parking:Parking,
-    val reservationTime : Date,
-    val userId : Int
+    val arrivalTime : Date,
+    var duration : Int,
+    val userId : Int,
+    val payee : Boolean,
 
 )

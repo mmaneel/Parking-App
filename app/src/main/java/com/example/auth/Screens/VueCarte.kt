@@ -1,4 +1,4 @@
-package com.example.auth.pages
+package com.example.auth.Screens
 
 import androidx.compose.runtime.Composable
 

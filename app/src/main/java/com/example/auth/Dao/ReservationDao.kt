@@ -17,8 +17,14 @@ interface ReservationDao {
     @Query("select * from reservations where userId= :userId")
     fun getReservations(userId: Int):List<Reservation>
 
-    @Query("select * from reservations where reservationTime = :date")
+    @Query("select * from reservations where id= :id")
+    fun getReservation(id: Int):Reservation
+
+    @Query("select * from reservations where arrivalTime = :date")
     fun getReservationsByDate(date: Date):List<Reservation>
+
+    @Query("UPDATE reservations SET duration = :duration, payee = 1 WHERE id = :id")
+    fun payReservation(duration: Int, id : Int)
 
     @Delete
     fun deleteReservation(reservation: Reservation)

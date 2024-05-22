@@ -2,6 +2,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.devtools.ksp") version "1.9.21-1.0.15"
+    id("com.google.gms.google-services") version "4.4.1" apply false
 }
 
 android {
@@ -91,4 +92,11 @@ dependencies {
     testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.4.2")
     //MockWebserver
     testImplementation ("com.squareup.okhttp3:mockwebserver:4.9.1")
+
+    implementation("com.google.zxing:core:3.4.1")
+
+    implementation("com.chargemap.compose:numberpicker:1.0.3")
+
+    implementation(platform("com.google.firebase:firebase-bom:33.0.0"))
+
 }

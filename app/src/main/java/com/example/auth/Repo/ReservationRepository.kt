@@ -1,30 +1,39 @@
 package com.example.auth.Repo
 
-import com.example.auth.Endpoints
+import com.example.auth.Retrofit.Endpoints
 import com.example.auth.ReservationDao
 import com.example.auth.data.Reservation
 import org.json.JSONObject
-import java.util.Date
 
 class ReservationRepository(private val resDao: ReservationDao, private val endpoints: Endpoints) {
 
-    suspend fun addReservations(reservation: Reservation): Boolean  {
+    suspend fun addReservations(reservation: Reservation): Int?  {
         val response = endpoints.createReservation(reservation)
         if(response.isSuccessful)
         {
             val responseData = response.body()?.string()
-            val id = responseData?.let { JSONObject(it).getString("id") }?.toInt() ?: return false
+            val id = responseData?.let { JSONObject(it).getString("id") }?.toInt() ?: return null
             reservation.id = id;
             resDao.addReservations(reservation)
-            return true
+            return id
         }
-        return false
+        return null
     }
 
 
     fun getReservations(userId : Int) = resDao.getReservations(userId)
 
-    fun getReservationsByDate(date: Date) = resDao.getReservationsByDate(date)
+    fun getReservation(id : Int) = resDao.getReservation(id)
+
+    suspend fun payReservation(duration: Int, id : Int) : Boolean  {
+        val response = endpoints.payReservation(id, duration)
+        if(response.isSuccessful)
+        {
+            resDao.payReservation(duration, id)
+            return true
+        }
+        return false
+    }
 
     suspend fun deleteReservation(reservation: Reservation): Boolean  {
         val response = endpoints.deleteReservation(reservation.id)

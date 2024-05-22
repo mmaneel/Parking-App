@@ -1,4 +1,4 @@
-package com.example.auth.Model
+package com.example.auth.ViewModels
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -20,12 +20,12 @@ class ParkingModel (private val parkingRepo : ParkingRepository) : ViewModel(){
 
 
 
-    fun getAllParks(){
+    fun getAllParks(limit: Int = 50){
         loading.value = true
         viewModelScope.launch {
 
             withContext(Dispatchers.IO) {
-                val response =  parkingRepo.getAllParks()
+                val response =  parkingRepo.getAllParks(limit)
                 if(response.isSuccessful){
                     val data = response.body()
                     if(data != null)
