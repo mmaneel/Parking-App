@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -75,10 +76,15 @@ fun DisplayMesReservation(reservationModel: ReservationModel, navController: Nav
             reservationModel.getAllReservations(context)
     }
 
-    val reservations = reservationModel.allReservations.value
-    
     var type by remember { mutableIntStateOf(0) }
+
+    val reservations = reservationModel.allReservations.value.filter {
+        (it.payee == (type != 1)) &&
+                ((type == 2 && Calendar.getInstance().timeInMillis > it.arrivalTime.time)
+                        || (type != 2 && Calendar.getInstance().timeInMillis <= it.arrivalTime.time)  )}
     
+
+
 
     // Check login status
     val isLoggedIn = AuthManager.isLoggedIn(context)
@@ -179,14 +185,25 @@ fun DisplayMesReservation(reservationModel: ReservationModel, navController: Nav
             
 
             if(reservations.isEmpty())
-                Text(
-                    text = "+ Reserver dans un parking",
-                    color = Color(0x770000FF),
-                    modifier = Modifier
-                        .clickable {
-                            navController.navigate(Destination.ParkingList.route)
-                        }
-                )
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ){
+                    if (type == 0)
+                        Text(
+                            text =  "+ Reserver dans un parking",
+                            color = Color(0x770000FF),
+                            modifier =Modifier
+                                .clickable {
+                                    navController.navigate(Destination.ParkingList.route)
+                                }
+                        )
+                    else
+                        Text(
+                            text =  "Aucune reservation de ce type",
+                            color = Color.Black,
+                        )
+                }
 
 
             LazyColumn (
@@ -194,10 +211,7 @@ fun DisplayMesReservation(reservationModel: ReservationModel, navController: Nav
                     .padding(5.dp)
             ) {
                 if(exists)
-                 items(reservations.filter {
-                     (it.payee == (type != 1)) &&
-                             ((type == 2 && Calendar.getInstance().timeInMillis > it.arrivalTime.time) || (type != 2 && Calendar.getInstance().timeInMillis <= it.arrivalTime.time)  )
-                 } ) {
+                 items(reservations) {
                      Column (
                          modifier = Modifier
                              .fillMaxWidth()

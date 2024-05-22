@@ -30,6 +30,7 @@ import android.widget.Toast
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Search
@@ -122,7 +123,13 @@ fun Home(parkingModel: ParkingModel, navController: NavHostController)
                 },
                 placeholder = { Text("Search") },
                 colors = TextFieldDefaults
-                    .textFieldColors(containerColor = Color(0xFFF6F6F6))
+                    .textFieldColors(containerColor = Color(0xFFF6F6F6)),
+                singleLine = true,
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        navController.navigate(Destination.ParkingListSearch.getRoute(searchValue.value))
+                    }
+                )
             )
 
 

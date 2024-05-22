@@ -60,6 +60,7 @@ import androidx.compose.material3.IconButton as IconButton1
 fun SearchBar(
     searchQuery: String,
     onSearchQueryChanged: (String) -> Unit,
+    onClickIcone: ()->Unit,
     modifier: Modifier = Modifier
 ) {
     TextField(
@@ -83,7 +84,9 @@ fun SearchBar(
                 imageVector = Icons.Default.Search,
                 contentDescription = null,
                 tint = Color(0xFF4E4AF2),
-                modifier = Modifier.size(24.dp)
+                modifier = Modifier
+                    .size(24.dp)
+                    .clickable { onClickIcone() }
             )
         },
         trailingIcon = {
@@ -142,9 +145,9 @@ fun ParkingList(parkingModel: ParkingModel, navController: NavHostController, se
 
 {
 
-    val searchQuery = remember { mutableStateOf("") }
+    val searchQuery = remember { mutableStateOf(searched) }
     val searching = remember {
-        mutableStateOf(false)
+        mutableStateOf(searched.isNotEmpty())
     }
 
     val context = LocalContext.current
@@ -153,7 +156,10 @@ fun ParkingList(parkingModel: ParkingModel, navController: NavHostController, se
         if (parkingModel.parks.value.isEmpty() || parkingModel.parks.value.size <= 3)
             parkingModel.getAllParks()
     }
-    val parks = parkingModel.parks.value
+    val parks = parkingModel.parks.value.filter {
+        it.name.contains(searchQuery.value, ignoreCase = true) ||
+                it.city.contains(searchQuery.value, ignoreCase = true)
+    }
 
     Column (
         modifier = Modifier
@@ -190,6 +196,7 @@ fun ParkingList(parkingModel: ParkingModel, navController: NavHostController, se
                     Log.d("ParkingList", "Nouvelle valeur de recherche: $it")
                     searchQuery.value = it
                 },
+                onClickIcone = {searching.value = false},
                 modifier = Modifier
                     .fillMaxWidth()
             )
@@ -237,10 +244,7 @@ fun ParkingList(parkingModel: ParkingModel, navController: NavHostController, se
             modifier =  Modifier
                 .padding(5.dp)
         ) {
-            items(items = parkingModel.parks.value.filter {
-                it.name.contains(searchQuery.value, ignoreCase = true) ||
-                        it.city.contains(searchQuery.value, ignoreCase = true)
-            }){
+            items(parks){
 
 
                 Row(

@@ -102,6 +102,16 @@ fun ParkingApp(navController: NavHostController, reservationModel: ReservationMo
                 ParkingList(parkingModel , navController)
             }
         }
+
+        composable(Destination.ParkingListSearch.route) {navBack->
+            val searched = navBack.arguments?.getString("searched")
+            NavScaffold(navController = navController) {
+                if(searched != null)
+                    ParkingList(parkingModel , navController,searched)
+            }
+        }
+
+
         composable(Destination.ParkingDetails.route) {navBack->
             val id = navBack.arguments?.getString("parkingId")?.toInt()
             if(id != null)
