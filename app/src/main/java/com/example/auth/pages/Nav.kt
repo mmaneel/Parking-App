@@ -80,13 +80,13 @@ fun NavScaffold(
 
 
                     NavigationBarItem(label = { Text(text = "Carte") },
-                        selected = false,
-                        onClick = { },
+                        selected = currentindex == Destination.VueCarte.route,
+                        onClick = { navController.navigate(Destination.VueCarte.route) },
                         colors = navColors,
                         icon = {
                             Icon(
                                 Icons.Default.LocationOn,
-                                contentDescription = "Profile"
+                                contentDescription = "map"
                             )
                         })
 

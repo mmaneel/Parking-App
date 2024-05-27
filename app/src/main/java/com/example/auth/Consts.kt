@@ -1,4 +1,4 @@
 package com.example.auth
 
 
-const val BaseURL = "https://80e9-105-235-131-168.ngrok-free.app/"
+const val BaseURL = "https://7834-154-121-81-193.ngrok-free.app/"

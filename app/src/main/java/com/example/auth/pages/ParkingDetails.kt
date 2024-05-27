@@ -261,13 +261,13 @@ fun ParkingDetails(id: Int, navController: NavHostController, reservationModel: 
                                 )
                             }
 
-                            TextWithIcon(
+                           /* TextWithIcon(
                                 text = "4.5 (362 avis)",
                                 fontSize = 17.sp,
                                 color = Color.Gray,
                                 Icon = Icons.Default.Star,
                                 iconeColor = Color(0xFFFCAF20)
-                            )
+                            )*/
                         }
 
 

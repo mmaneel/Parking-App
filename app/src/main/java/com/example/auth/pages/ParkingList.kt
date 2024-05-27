@@ -32,17 +32,28 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.platform.LocalContext
 import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -52,33 +63,105 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.auth.BaseURL
 import com.example.auth.Model.ParkingModel
-import com.example.auth.Parking
+
 import com.example.auth.R
 
 
 @Composable
-fun TextWithIcon(text:String, fontSize:TextUnit,color:Color ,Icon:ImageVector, iconeColor:Color = color)
+fun TextWithIcon(text:String, fontSize:TextUnit,color:Color ,Icon:ImageVector,iconeColor:Color = color)
 {
     Row {
         Icon(
             imageVector = Icon,
             contentDescription = null, // Set to null if the icon is purely decorative
             tint = iconeColor,
+            modifier = Modifier
+                .padding(end = 4.dp)
+
         )
 
         Text(
             text = text,
             fontSize = fontSize,
             color = color,
+
         )
     }
 
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SearchBar(
+    searchQuery: String,
+    onSearchQueryChanged: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    TextField(
+        value = searchQuery,
+        onValueChange = onSearchQueryChanged,
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp)
+            .clip(RoundedCornerShape(16.dp))
+            .background(Color(0xFFE8F0FE))
+            .border(
+                BorderStroke(1.dp, Color(0xFF4E4AF2)),
+                shape = RoundedCornerShape(16.dp)
+            ),
+        placeholder = { Text("Search parking...") },
+        leadingIcon = {
+            Icon(
+                imageVector = Icons.Default.Search,
+                contentDescription = null,
+                tint = Color(0xFF4E4AF2),
+                modifier = Modifier.size(24.dp)
+            )
+        },
+        trailingIcon = {
+            if (searchQuery.isNotEmpty()) {
+                IconButton(
+                    onClick = { onSearchQueryChanged("") }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = "Clear search",
+                        tint = Color(0xFF4E4AF2),
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+            }
+        },
+        colors = TextFieldDefaults.colors(
+            focusedTextColor = Color.Black,
+            unfocusedTextColor = Color.Black,
+            focusedContainerColor = Color(0xFFE8F0FE),
+            unfocusedContainerColor = Color(0xFFE8F0FE),
+            cursorColor = Color.Black,
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+            unfocusedLeadingIconColor = Color(0xFF4E4AF2),
+            unfocusedTrailingIconColor = Color(0xFF4E4AF2),
+            unfocusedPlaceholderColor = Color.Gray ,
+            focusedPlaceholderColor = Color.Gray
+        ),
+        singleLine = true,
+        shape = RoundedCornerShape(16.dp)
+    )
 }
 
 @Composable
 fun ParkingList(parkingModel: ParkingModel, navController: NavHostController)
 
 {
+    var cityMenuExpanded by remember { mutableStateOf(false) }
+
+    val cities = listOf("alger", "oran", "tizi")
+    val selectedCity = remember { mutableStateOf<String?>(null) }
+
+
+    val searchQuery = remember { mutableStateOf("") }
 
     val context = LocalContext.current
 
@@ -135,6 +218,13 @@ fun ParkingList(parkingModel: ParkingModel, navController: NavHostController)
             }
         }
 
+        SearchBar(
+            searchQuery = searchQuery.value,
+            onSearchQueryChanged = { searchQuery.value = it },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        )
         //Displayed if no parks were found
         if(parks.isEmpty())
             Text(
@@ -142,10 +232,15 @@ fun ParkingList(parkingModel: ParkingModel, navController: NavHostController)
                 color = Color.Gray
             )
 
+
         LazyColumn (
             modifier =  Modifier.padding(5.dp)
         ) {
-            items(parks) {
+            items(items = parkingModel.parks.value.filter {
+                it.name.contains(searchQuery.value, ignoreCase = true)
+                        /*||
+                        it.adress.contains(searchQuery.value, ignoreCase = true)*/
+            }) {
 
 
                 Row(
@@ -210,8 +305,17 @@ fun ParkingList(parkingModel: ParkingModel, navController: NavHostController)
                                 text = it.city,
                                 fontSize = 15.sp,
                                 color = Color.Gray,
-                                Icon = Icons.Default.LocationOn
-                            )
+                                Icon = Icons.Default.LocationOn,
+
+                            )/*.clickable {
+
+                                navController.navigate(
+                                    Destination.ParkingMap.getRoute(
+                                        it.latitude,
+                                        it.longitude
+                                    )
+                                )
+                            }*/
                         
                             Spacer(modifier = Modifier.height(10.dp))
                             
@@ -238,8 +342,8 @@ fun ParkingList(parkingModel: ParkingModel, navController: NavHostController)
             }
         }
 
-        if(parkingModel.loading.value)
-            CircularProgressIndicator()
+        /*if(parkingModel.loading.value)
+           // CircularProgressIndicator()*/
         if(parkingModel.error.value.isNotEmpty()){
             Toast.makeText(context, parkingModel.error.value, Toast.LENGTH_SHORT).show()
         }

@@ -1,6 +1,8 @@
 package com.example.auth
-
+import DisplayProfile
+import android.Manifest
 import android.annotation.SuppressLint
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.view.Window
@@ -9,12 +11,24 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.Image
+
+//import androidx.compose.foundation.layout.BoxScopeInstance.matchParentSize
 import androidx.compose.foundation.layout.fillMaxSize
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -27,15 +41,16 @@ import com.example.auth.Model.ParkingModel
 import com.example.auth.Model.ReservationModel
 import com.example.auth.pages.DisplayMesReservation
 import com.example.auth.pages.DisplayParkingSlot
-import com.example.auth.pages.DisplayProfile
 import com.example.auth.pages.DisplaySignIn
 import com.example.auth.pages.DisplaySignUP
 import com.example.auth.pages.NavScaffold
 import com.example.auth.ui.theme.AuthTheme
 import com.example.auth.pages.firstPage
+import com.example.auth.pages.maps
 import com.example.exo2.Destination
 import com.example.exo2.ParkingDetails
 import com.example.exo2.ParkingList
+import com.google.android.libraries.places.api.Places
 
 
 class MainActivity : ComponentActivity() {
@@ -57,6 +72,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
 
+
         setContent {
             AuthTheme {
                 // A surface container using the 'background' color from the theme
@@ -64,11 +80,19 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                     ParkingApp(navController = rememberNavController(), reservationModel, parkingModel,authModel)
+
+                     //   maps( parkingModel)
+
+                    ParkingApp(navController = rememberNavController(), reservationModel, parkingModel,authModel)
                 }
             }
         }
     }
+
+
+
+
+
 }
 
 
@@ -83,6 +107,7 @@ fun ParkingApp(navController: NavHostController, reservationModel: ReservationMo
 
     NavHost(navController = navController, startDestination = Destination.Splash.route){
         composable(Destination.Splash.route) {firstPage(navController) }
+      //  composable(Destination.VueCarte.route) { maps(parkingModel ,navController) }
         composable(Destination.SignIn.route) { DisplaySignIn(navController, authModel) }
         composable(Destination.SignUp.route) { DisplaySignUP(navController, authModel) }
         composable(Destination.ParkingSlot.route) { DisplayParkingSlot(navController) }
@@ -92,6 +117,10 @@ fun ParkingApp(navController: NavHostController, reservationModel: ReservationMo
                     }
 
         }
+        composable(Destination.VueCarte.route) {
+            NavScaffold(navController = navController) {
+                maps(parkingModel ,navController)
+            } }
         composable(Destination.Profile.route) {  NavScaffold(navController = navController) { DisplayProfile(navController) }}
         composable(Destination.ParkingList.route) {
             NavScaffold(navController = navController) {
@@ -106,6 +135,4 @@ fun ParkingApp(navController: NavHostController, reservationModel: ReservationMo
     }
 
 }
-
-
 }

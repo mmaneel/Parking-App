@@ -259,7 +259,8 @@ fun DisplaySignIn(navController: NavHostController, authModel: AuthModel){
                         modifier = Modifier
                             //.fillMaxWidth()
                             .height(45.dp)
-                            .width(45.dp),
+                            .width(45.dp)
+                            ,
 
                         contentScale = ContentScale.FillWidth
                     )

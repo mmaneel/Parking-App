@@ -1,5 +1,6 @@
 package com.example.auth.Model
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -18,7 +19,7 @@ class ParkingModel (private val parkingRepo : ParkingRepository) : ViewModel(){
     val loading = mutableStateOf(false)
     val error =  mutableStateOf("")
 
-
+    val nearbyParks = mutableStateOf(listOf<Parking>())
 
     fun getAllParks(){
         loading.value = true
@@ -60,12 +61,35 @@ class ParkingModel (private val parkingRepo : ParkingRepository) : ViewModel(){
         }
     }
 
+    fun getNearbyParks(latitude: Double, longitude: Double, radius: Double) {
+        loading.value = true
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                val response = parkingRepo.getNearbyParkings(latitude, longitude, radius)
+                if (response.isSuccessful) {
+                    val data = response.body()
+                    if (data != null) {
+                        Log.d("getNearbyParks", "Data received: $data")
+                        nearbyParks.value = data
 
-    @Suppress("UNCHECKED_CAST")
-    class Factory(private val reservationRepository: ParkingRepository) : ViewModelProvider.Factory {
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return ParkingModel(reservationRepository) as T
+                    }
+                } else {
+                    error.value = "Unable to fetch nearby parks"
+                }
+                loading.value = false
+            }
         }
     }
 
-}
+
+
+
+        @Suppress("UNCHECKED_CAST")
+        class Factory(private val reservationRepository: ParkingRepository) :
+            ViewModelProvider.Factory {
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                return ParkingModel(reservationRepository) as T
+            }
+        }
+
+    }

@@ -13,6 +13,8 @@ data class Parking(
     val adress: String,
     val description: String,
     val img:String,
+    val latitude: Double,
+    val longitude: Double
 
 )
 

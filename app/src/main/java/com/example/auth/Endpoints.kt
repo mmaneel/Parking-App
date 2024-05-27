@@ -12,6 +12,7 @@ import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
+import retrofit2.http.Query
 import java.util.Date
 
 interface Endpoints {
@@ -45,6 +46,12 @@ interface Endpoints {
     @DELETE("reservation/{id}")
     suspend fun deleteReservation(@Path("id") id: Int): Response<Void>
 
+    @GET("/parkings/nearby")
+    suspend fun getNearbyParkings(
+        @Query("latitude") latitude: Double,
+        @Query("longitude") longitude: Double,
+        @Query("radius") radius: Double
+    ): Response<List<Parking>>
 
     companion object {
         var endpoint: Endpoints? = null
