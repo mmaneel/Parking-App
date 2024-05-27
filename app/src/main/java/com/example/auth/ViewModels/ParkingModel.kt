@@ -1,4 +1,4 @@
-package com.example.auth.Model
+package com.example.auth.ViewModels
 
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
@@ -21,12 +21,12 @@ class ParkingModel (private val parkingRepo : ParkingRepository) : ViewModel(){
 
     val nearbyParks = mutableStateOf(listOf<Parking>())
 
-    fun getAllParks(){
+    fun getAllParks(limit: Int = 50){
         loading.value = true
         viewModelScope.launch {
 
             withContext(Dispatchers.IO) {
-                val response =  parkingRepo.getAllParks()
+                val response =  parkingRepo.getAllParks(limit)
                 if(response.isSuccessful){
                     val data = response.body()
                     if(data != null)

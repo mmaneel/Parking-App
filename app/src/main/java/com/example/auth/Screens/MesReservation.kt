@@ -1,8 +1,8 @@
-package com.example.auth.pages
+package com.example.auth.Screens
 
+import TextWithIcon
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -24,41 +25,44 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.ExitToApp
-import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import coil.compose.AsyncImage
 import com.example.auth.AuthManager
 import com.example.auth.BaseURL
+import com.example.auth.CoilAsyncImage
+import com.example.auth.IMAGE_URL
 import com.example.auth.R
-import com.example.auth.Model.ReservationModel
+import com.example.auth.ViewModels.ReservationModel
 import com.example.exo2.Destination
-import com.example.exo2.TextWithIcon
+
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.time.LocalDate
-import java.time.LocalTime
+import java.util.Calendar
 import java.util.Date
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -69,8 +73,19 @@ fun DisplayMesReservation(reservationModel: ReservationModel, navController: Nav
         mutableStateOf (false)
     }
 
-    reservationModel.getAllReservations(context)
-    val reservations = reservationModel.allReservations.value
+    LaunchedEffect(Unit) {
+            reservationModel.getAllReservations(context)
+    }
+
+    var type by remember { mutableIntStateOf(0) }
+
+    val reservations = reservationModel.allReservations.value.filter {
+        (it.payee == (type != 1)) &&
+                ((type == 2 && Calendar.getInstance().timeInMillis > it.arrivalTime.time)
+                        || (type != 2 && Calendar.getInstance().timeInMillis <= it.arrivalTime.time)  )}
+    
+
+
 
     // Check login status
     val isLoggedIn = AuthManager.isLoggedIn(context)
@@ -80,7 +95,7 @@ fun DisplayMesReservation(reservationModel: ReservationModel, navController: Nav
         Column (
             modifier = Modifier
                 .background(Color(0xFFF6F6F6))
-                .fillMaxHeight(),
+                .fillMaxHeight(.92f),
             horizontalAlignment = Alignment.CenterHorizontally
         ){
             Row(
@@ -123,21 +138,73 @@ fun DisplayMesReservation(reservationModel: ReservationModel, navController: Nav
                     }
                 ) {
                     Icon(
-                        imageVector = Icons.Default.ExitToApp,
+                        imageVector = Icons.Default.Search,
                         contentDescription = null,
                     )
                 }
             }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                TextButton(
+                    modifier = Modifier.width(120.dp) ,
+                    onClick = {
+                            type = 0
+                }) {
+                    Text(
+                        text = "Validé",
+                        color = if (type == 0) Color(0xFF7136ff) else Color.Black,
+                        fontSize = 17.sp,
+                    )
+                }
+                TextButton(
+                    modifier = Modifier.width(120.dp),
+                    onClick = {
+                            type = 1
+                }) {
+                    Text(
+                        text = "En Attente",
+                        color = if (type == 1) Color(0xFF7136ff) else Color.Black,
+                        fontSize = 17.sp,
+                    )
+                }
+                TextButton(
+                    modifier = Modifier.width(120.dp),
+                    onClick = {
+                            type = 2
+                }) {
+                    Text(
+                        text = "Complété",
+                        color = if (type == 2) Color(0xFF7136ff) else Color.Black,
+                        fontSize = 17.sp,
+                    )
+                }
+
+            }
+            
 
             if(reservations.isEmpty())
-                Text(
-                    text = "+ Reserver dans un parking",
-                    color = Color(0x770000FF),
-                    modifier = Modifier
-                        .clickable {
-                            navController.navigate(Destination.ParkingList.route)
-                        }
-                )
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ){
+                    if (type == 0)
+                        Text(
+                            text =  "+ Reserver dans un parking",
+                            color = Color(0x770000FF),
+                            modifier =Modifier
+                                .clickable {
+                                    navController.navigate(Destination.ParkingList.route)
+                                }
+                        )
+                    else
+                        Text(
+                            text =  "Aucune reservation de ce type",
+                            color = Color.Black,
+                        )
+                }
 
 
             LazyColumn (
@@ -169,14 +236,15 @@ fun DisplayMesReservation(reservationModel: ReservationModel, navController: Nav
                                      .padding(5.dp),
                                  contentAlignment = Alignment.Center
                              ) {
-                                 AsyncImage(
-                                     model = BaseURL + it.parking.img,
+                                 CoilAsyncImage(
+                                     model = IMAGE_URL + it.parking.img,
                                      modifier = Modifier
                                          .aspectRatio(1f)
                                          .clip(RoundedCornerShape(10.dp)),
                                      contentDescription = "Parking Image",
                                      contentScale = ContentScale.Crop,
-                                     placeholder = painterResource(id = R.drawable.parking_ph)
+                                     placeholder =  R.drawable.parking_ph,
+                                     error = R.drawable.parking_ph,
                                  )
                              }
 
@@ -208,7 +276,7 @@ fun DisplayMesReservation(reservationModel: ReservationModel, navController: Nav
                                  )
 
                                  TextWithIcon(
-                                     text = formatTime(it.reservationTime),
+                                     text = formatTime(it.arrivalTime),
                                      fontSize = 15.sp,
                                      color = Color.Gray,
                                      Icon = Icons.Default.DateRange
@@ -256,14 +324,32 @@ fun DisplayMesReservation(reservationModel: ReservationModel, navController: Nav
                                  Text(color = Color(0xFF7136ff), text = "Annuler")
                              }
                              Spacer(modifier = Modifier.weight(.05f))
-                             Button(
-                                 modifier = Modifier.weight(.4f),
-                                 colors = ButtonDefaults.buttonColors(
-                                     containerColor = Color(0xFF7136ff)
-                                 ),
-                                 onClick = { /*TODO*/ }) {
-                                 Text(text = "Valider")
+
+                             if(it.payee)
+                             {
+                                 Button(
+                                     modifier = Modifier.weight(.4f),
+                                     colors = ButtonDefaults.buttonColors(
+                                         containerColor = Color(0xFF7136ff)
+                                     ),
+                                     onClick = { navController.navigate(Destination.Ticket.getRoute(it.id)) }) {
+                                     Text(text = "E-Ticket")
+                                 }
                              }
+                             else {
+                                 Button(
+                                     modifier = Modifier.weight(.4f),
+                                     colors = ButtonDefaults.buttonColors(
+                                         containerColor = Color(0xFF7136ff)
+                                     ),
+                                     onClick = {
+                                         reservationModel.getAllReservations(context)
+                                         navController.navigate(Destination.Payment.getRoute(it.id))
+                                     }) {
+                                     Text(text = "Valider")
+                                 }
+                             }
+
                              Spacer(modifier = Modifier.weight(.05f))
                          }
                      }

@@ -1,4 +1,4 @@
-package com.example.auth.pages
+package com.example.auth.Screens
 
 import android.Manifest
 import android.content.pm.PackageManager
@@ -37,8 +37,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
-import com.example.auth.Model.ParkingModel
+
 import com.example.auth.R
+import com.example.auth.ViewModels.ParkingModel
 import com.example.exo2.Destination
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -49,7 +50,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.*
 
 @Composable
-fun maps(parkingViewModel: ParkingModel,navController: NavHostController) {
+fun maps(parkingViewModel: ParkingModel, navController: NavHostController) {
     val context = LocalContext.current
     var hasLocationPermission by remember {
         mutableStateOf(

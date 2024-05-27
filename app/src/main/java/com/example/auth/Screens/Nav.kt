@@ -1,23 +1,16 @@
-package com.example.auth.pages
+package com.example.auth.Screens
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemColors
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -68,8 +61,8 @@ fun NavScaffold(
                     contentColor = Color(0xFF7136ff)
                 ) {
                     NavigationBarItem(label = { Text(text = "Home") },
-                        selected = currentindex == Destination.ParkingList.route,
-                        onClick = { navController.navigate(Destination.ParkingList.route) },
+                        selected = currentindex == Destination.Home.route,
+                        onClick = { navController.navigate(Destination.Home.route) },
                         colors = navColors,
                         icon = {
                             Icon(
