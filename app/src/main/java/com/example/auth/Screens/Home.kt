@@ -33,17 +33,24 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.navigation.NavHostController
 import com.example.auth.CoilAsyncImage
 import com.example.auth.IMAGE_URL
@@ -53,11 +60,39 @@ import com.example.auth.R
 import com.example.auth.SkeletonLoading.VerticalParkingSkeleton
 
 
+
+@Composable
+fun CityDropdownMenu(
+    cities: List<String>,
+    onCitySelected: (String) -> Unit,
+    onDismissRequest: () -> Unit
+) {
+    DropdownMenu(
+        expanded = true, // Toujours ouvert
+        onDismissRequest = onDismissRequest
+    ) {
+        cities.forEach { city ->
+            DropdownMenuItem(
+                text = { Text(text = city) },
+                onClick = {
+                    onCitySelected(city)
+                    onDismissRequest()
+                })
+        }
+    }
+}
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Home(parkingModel: ParkingModel, navController: NavHostController)
 
 {
+    val cities = listOf("Alger", "Oran", "Tizi")
+
+    // 2. Variable d'état pour suivre la ville sélectionnée
+    var selectedCity by remember { mutableStateOf<String?>(null) }
+
+    // 3. Variable d'état pour gérer l'état d'expansion du menu de sélection de la ville
+    var cityMenuExpanded by remember { mutableStateOf(false) }
 
 
     val context = LocalContext.current
@@ -70,7 +105,10 @@ fun Home(parkingModel: ParkingModel, navController: NavHostController)
         if (parkingModel.parks.value.isEmpty())
             parkingModel.getAllParks(3)
     }
-    val parks = parkingModel.parks.value
+    //val parks = parkingModel.parks.value
+    val parks = parkingModel.parks.value.filter { parking ->
+        selectedCity == null || parking.city.equals(selectedCity, ignoreCase = true)
+    }
 
     Column (
         modifier = Modifier
@@ -133,6 +171,29 @@ fun Home(parkingModel: ParkingModel, navController: NavHostController)
                 )
             )
 
+
+            Button(
+                onClick = { cityMenuExpanded = true }
+
+            ) {
+                Text(text ="By city" )
+                Icon(
+                    imageVector = Icons.Default.ArrowDropDown,
+                    contentDescription = null,
+                )
+
+            }
+
+            if (cityMenuExpanded) {
+                CityDropdownMenu(
+                    cities = cities,
+                    onCitySelected = { city ->
+                        selectedCity = city
+                        cityMenuExpanded = false
+                    },
+                    onDismissRequest = { cityMenuExpanded = false }
+                )
+            }
 
         }
 

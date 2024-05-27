@@ -36,13 +36,17 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.TextUnit
@@ -145,6 +149,7 @@ fun ParkingList(parkingModel: ParkingModel, navController: NavHostController, se
 
 {
 
+
     val searchQuery = remember { mutableStateOf(searched) }
     val searching = remember {
         mutableStateOf(searched.isNotEmpty())
@@ -225,6 +230,7 @@ fun ParkingList(parkingModel: ParkingModel, navController: NavHostController, se
         }
 
 
+    }
         //Displayed if no parks were found
         if(parks.isEmpty() and !parkingModel.loading.value)
 
@@ -345,4 +351,3 @@ fun ParkingList(parkingModel: ParkingModel, navController: NavHostController, se
         }
 
     }
-}
