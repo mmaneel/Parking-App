@@ -203,7 +203,7 @@ fun DisplayPayment(navController: NavHostController, id: Int, reservvationModel 
                         .clip(RoundedCornerShape(10.dp))
                         .background(if (selected.value == 1) Color(0x227136ff) else Color.White)
                         .padding(15.dp)
-                        .clickable { selected.value = 1 },
+                        .clickable { selected.intValue = 1 },
                 ) {
                     Icon(
                         painter = painterResource(id = drawable.wallet),

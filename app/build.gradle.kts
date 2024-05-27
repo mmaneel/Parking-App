@@ -99,4 +99,11 @@ dependencies {
 
     implementation(platform("com.google.firebase:firebase-bom:33.0.0"))
 
+    //Location
+    implementation("com.google.android.gms:play-services-location:21.2.0")
+    implementation("com.google.accompanist:accompanist-permissions:0.35.0-alpha")
+
+
+    implementation("androidx.work:work-runtime-ktx:2.7.1")
+
 }

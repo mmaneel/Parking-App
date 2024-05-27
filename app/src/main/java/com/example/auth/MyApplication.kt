@@ -1,10 +1,14 @@
 package com.example.auth
 
 import android.app.Application
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
 import com.example.auth.Repo.AuthRepository
 import com.example.auth.Repo.ParkingRepository
 import com.example.auth.Repo.ReservationRepository
 import com.example.auth.Retrofit.Endpoints
+import java.util.concurrent.TimeUnit
 
 class MyApplication:Application() {
 
@@ -16,5 +20,19 @@ class MyApplication:Application() {
     val reservationRepository by lazy { ReservationRepository(reservationDao, endpoints) }
     val parkingRepository by lazy {ParkingRepository(endpoints)}
     val authRepository by lazy {AuthRepository(endpoints)}
+
+    override fun onCreate() {
+        super.onCreate()
+
+        val workRequest = PeriodicWorkRequestBuilder<ReservationWorker>(10, TimeUnit.MINUTES)
+            .build()
+
+        WorkManager.getInstance(this)
+            .enqueueUniquePeriodicWork(
+                "ReservationNotificationWork",
+                ExistingPeriodicWorkPolicy.KEEP,
+                workRequest
+            )
+    }
 
 }

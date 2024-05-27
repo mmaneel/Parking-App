@@ -63,6 +63,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+                    //LocationScreen()
                     ParkingApp(navController = rememberNavController(), reservationModel, parkingModel,authModel)
                 }
             }

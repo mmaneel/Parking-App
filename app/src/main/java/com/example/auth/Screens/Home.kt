@@ -1,5 +1,6 @@
 package com.example.exo2
 
+import android.location.Location
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -41,11 +42,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.navigation.NavHostController
 import com.example.auth.CoilAsyncImage
 import com.example.auth.IMAGE_URL
+import com.example.auth.LocationGetter
 import com.example.auth.SkeletonLoading.ParkingSkeleton
 import com.example.auth.ViewModels.ParkingModel
 import com.example.auth.R
@@ -57,12 +61,18 @@ import com.example.auth.SkeletonLoading.VerticalParkingSkeleton
 fun Home(parkingModel: ParkingModel, navController: NavHostController)
 
 {
-
+    var location by remember { mutableStateOf<Location?>(null) }
+    var address by remember { mutableStateOf<String?>(null) }
 
     val context = LocalContext.current
 
     val searchValue = remember {
         mutableStateOf("")
+    }
+
+    LocationGetter(context = context) { l, a ->
+        location = l
+        address = a
     }
 
     LaunchedEffect(Unit) {
@@ -97,7 +107,7 @@ fun Home(parkingModel: ParkingModel, navController: NavHostController)
             Spacer(modifier = Modifier.height(5.dp))
 
             TextWithIcon(
-                text = "Oued Smar,Alger",
+                text = "$address",
                 fontSize = 20.sp,
                 color = Color.White,
                 Icon = Icons.Default.LocationOn
@@ -196,7 +206,10 @@ fun Home(parkingModel: ParkingModel, navController: NavHostController)
                             Column(
                                 modifier = Modifier
                                     .background(Color.White)
-                                    .padding(5.dp),
+                                    .padding(5.dp)
+                                    .clickable {
+                                        navController.navigate(Destination.ParkingDetails.getRoute(it.id))
+                                     },
                             ) {
                                 CoilAsyncImage(
                                     model = IMAGE_URL + it.img,
