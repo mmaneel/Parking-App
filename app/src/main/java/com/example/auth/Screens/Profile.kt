@@ -1,6 +1,8 @@
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 
@@ -47,10 +49,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 
 import androidx.compose.material3.TextFieldDefaults
-
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -60,7 +65,7 @@ fun UserProfile(
     email: String,
     onLogout: () -> Unit
 ) {
-    Column(
+   /* Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp), // Ajoute un padding de 16 dp autour de la colonne
@@ -184,8 +189,125 @@ fun UserProfile(
             Spacer(modifier = Modifier.width(8.dp))
             Text(text = "Logout")
         }
+    }*/
+    Column(
+        modifier = Modifier
+            .verticalScroll(rememberScrollState())
+            .padding(8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+
+    ) {
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp)
+                .padding(bottom = 10.dp),
+
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            IconButton(
+                modifier = Modifier
+                    .scale(.8f)
+                    .border(width = 1.dp, color = Color.LightGray, shape = CircleShape)
+                    .background(Color.White, shape = CircleShape),
+                onClick = {/*tt*/}
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = null,
+                )
+            }
+
+            androidx.compose.material.Text(
+                text = "Profile",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+            )
+
+            IconButton(
+                modifier = Modifier
+                    .scale(.8f)
+                    .border(width = 1.dp, color = Color.LightGray, shape = CircleShape)
+                    .background(Color.White, shape = CircleShape),
+                onClick = {  }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Notifications,
+                    contentDescription = null,
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(40.dp))
+
+        Column {
+            Icon(
+                imageVector = Icons.Filled.Person,
+                contentDescription = "Profile Icon",
+                modifier = Modifier
+                    .size(64.dp) // Définit la taille de l'icône à 64 dp
+                    .clip(CircleShape) // Applique une forme circulaire à l'icône
+                    .background(Color.White) // Définit un arrière-plan gris pour l'icône
+            )
+            Spacer(modifier = Modifier.height(30.dp))
+        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 4.dp, end = 4.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            androidx.compose.material.Text(text = "Name", modifier = Modifier
+                .width(100.dp),
+                fontSize=28.sp)
+            TextField(value = "$username",
+                onValueChange ={it},
+
+                colors = TextFieldDefaults
+                    .textFieldColors(containerColor = Color.Transparent))
+        }
+        Spacer(modifier = Modifier.height(30.dp))
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 4.dp, end = 4.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            androidx.compose.material.Text(text = "Email", modifier = Modifier
+                .width(100.dp),
+                fontSize = 28.sp
+            )
+
+
+            TextField(value = "$email",
+                onValueChange ={it},
+
+                colors = TextFieldDefaults
+                    .textFieldColors(containerColor = Color.Transparent))
+        }
+        Spacer(modifier = Modifier.height(100.dp))
+        // Logout Button
+        Button(
+            onClick = onLogout,
+            colors = ButtonDefaults.buttonColors(
+                contentColor = Color.White,
+                containerColor = Color(0xFF7136ff)
+            ),
+            modifier = Modifier
+                .height(48.dp)
+                .fillMaxWidth(0.5f)
+        ) {
+            Icon(
+                imageVector = Icons.Filled.ExitToApp,
+                contentDescription = "Logout"
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            androidx.compose.material.Text(text = "Logout")
+        }
     }
 }
+
 
 @Composable
 fun DisplayProfile(navController: NavHostController) {
@@ -212,4 +334,6 @@ fun DisplayProfile(navController: NavHostController) {
             navController.navigate(Destination.SignIn.route)
         }
     }
+
+
 }

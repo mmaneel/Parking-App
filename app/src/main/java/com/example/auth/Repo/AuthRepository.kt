@@ -27,7 +27,7 @@ class AuthRepository(private val endpoints: Endpoints) {
             emit(ResultState.Error(ERROR_MESSAGE))
         }
     }
-
+    suspend fun checkEmail(email: Map<String, String>) = endpoints.checkEmail(email)
 
 
 
