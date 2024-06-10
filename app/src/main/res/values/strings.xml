@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">CarParker</string>
     <string name="MAPS_API_KEY">AIzaSyCP70r3ldU2IuWWC0UlrUuCqoqba_QaXA0</string>
-    <string name="gcp_id">553313394578-6uuv2ohetikvrqkb6nekri7en4qbca74.example.com</string>
+    <string name="client_id">934257941955-n26eq6q5f4ovs5jcblhsrt9dr44qvsvt.apps.googleusercontent.com</string>
 </resources>

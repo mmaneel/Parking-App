@@ -64,6 +64,14 @@ class AuthVIewModel(private val authRepository: AuthRepository ) :BaseModel(){
     }
 
 
+    suspend fun checkEmail(email: String): Boolean {
+        val response = authRepository.checkEmail(mapOf("email" to email))
+        return if (response.isSuccessful) {
+            response.body()?.get("exists") ?: false
+        } else {
+            false
+        }
+    }
 
     fun register(username: String, email: String, password: String, onComplete: (Boolean, String?) -> Unit) {
         viewModelScope.launch {

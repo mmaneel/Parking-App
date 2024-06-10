@@ -43,6 +43,8 @@ interface Endpoints {
         @Field("password") password: String
     ): Response<ResponseBody>
 
+    @POST("checkemail")
+    suspend fun checkEmail(@Body email: Map<String, String>): Response<Map<String, Boolean>>
 
     @POST("reservation")
     suspend fun  createReservation(@Body reservation: Reservation): Response<ResponseBody>

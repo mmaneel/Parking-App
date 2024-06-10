@@ -2,9 +2,8 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.devtools.ksp") version "1.9.21-1.0.15"
-    id("com.google.gms.google-services") version "4.4.1" apply false
+    id("com.google.gms.google-services")
 }
-
 android {
     namespace = "com.example.auth"
     compileSdk = 34
@@ -42,7 +41,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = "1.5.6"
     }
     packaging {
         resources {
@@ -60,13 +59,15 @@ dependencies {
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
-    implementation("androidx.compose.material3:material3")
+   // implementation("androidx.compose.material3:material3")
     implementation("com.google.code.gson:gson:2.8.8")
 
     implementation("androidx.navigation:navigation-compose:2.7.7")
     implementation("com.google.android.gms:play-services-location:21.2.0")
     implementation("com.google.android.libraries.places:places:3.4.0")
     implementation("com.google.android.gms:play-services-maps:18.2.0")
+    implementation("com.google.firebase:firebase-auth:23.0.0")
+    implementation("androidx.compose.material3:material3-android:1.2.1")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
@@ -107,6 +108,8 @@ dependencies {
     implementation("com.chargemap.compose:numberpicker:1.0.3")
 
     implementation(platform("com.google.firebase:firebase-bom:33.0.0"))
+    //google sign in
+    implementation ("com.google.android.gms:play-services-auth:16.0.0")
 
     //Location
     implementation("com.google.android.gms:play-services-location:21.2.0")
