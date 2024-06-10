@@ -38,7 +38,7 @@ class ReservationWorker(
             for (reservation in reservations) {
                 val notificationTime = reservation.arrivalTime.time - 3600000 // 1 hour before
 
-                if (currentTime <= notificationTime && notificationTime <= currentTime + 10*60000) {
+                if (currentTime <= notificationTime && notificationTime <= currentTime + NOTI_CHECK*60000) {
                     // Send notification
                     sendNotification(reservation)
                 }

@@ -18,7 +18,7 @@ import org.json.JSONObject
 
 class AuthVIewModel(private val authRepository: AuthRepository ) :BaseModel(){
 
-    val loggedIn = mutableStateOf(false)
+    private val loggedIn = mutableStateOf(false)
     fun login(email: String, password: String, context: Context, onComplete: (Boolean, String?) -> Unit) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {

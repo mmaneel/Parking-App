@@ -35,10 +35,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.auth.CoilAsyncImage
-import com.example.auth.IMAGE_URL
-import com.example.auth.R
-import com.example.exo2.TextWithIcon
+
 
 
 @Composable

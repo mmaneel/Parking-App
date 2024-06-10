@@ -45,7 +45,7 @@ import androidx.navigation.NavHostController
 import com.chargemap.compose.numberpicker.NumberPicker
 import com.example.auth.R.drawable
 import com.example.auth.ViewModels.ReservationModel
-import com.example.exo2.Destination
+import com.example.auth.Destination
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)

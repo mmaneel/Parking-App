@@ -53,6 +53,7 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.auth.AuthManager
 import com.example.auth.DateTimePicker
+import com.example.auth.Destination
 import com.example.auth.IMAGE_URL
 import com.example.auth.ViewModels.ParkingModel
 import com.example.auth.R
@@ -275,13 +276,13 @@ fun ParkingDetails(id: Int, navController: NavHostController, reservationModel: 
                                 )
                             }
 
-                            TextWithIcon(
+                           /* TextWithIcon(
                                 text = "4.5 (362 avis)",
                                 fontSize = 17.sp,
                                 color = Color.Gray,
                                 Icon = Icons.Default.Star,
                                 iconeColor = Color(0xFFFCAF20)
-                            )
+                            )*/
                         }
 
 

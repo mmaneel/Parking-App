@@ -24,7 +24,7 @@ class MyApplication:Application() {
     override fun onCreate() {
         super.onCreate()
 
-        val workRequest = PeriodicWorkRequestBuilder<ReservationWorker>(10, TimeUnit.MINUTES)
+        val workRequest = PeriodicWorkRequestBuilder<ReservationWorker>(NOTI_CHECK, TimeUnit.MINUTES)
             .build()
 
         WorkManager.getInstance(this)

@@ -48,7 +48,7 @@ import androidx.navigation.NavHostController
 import com.example.auth.AuthManager
 import com.example.auth.ViewModels.AuthVIewModel
 import com.example.auth.R
-import com.example.exo2.Destination
+import com.example.auth.Destination
 
 @Composable
 fun DisplaySignUP(navController: NavHostController, authModel: AuthVIewModel){

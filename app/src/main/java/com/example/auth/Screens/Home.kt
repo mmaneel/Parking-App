@@ -1,5 +1,8 @@
-package com.example.exo2
+package com.example.auth
 
+
+import android.Manifest
+import android.content.pm.PackageManager
 import android.location.Location
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -33,12 +36,17 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.LaunchedEffect
@@ -46,23 +54,54 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
 import com.example.auth.CoilAsyncImage
 import com.example.auth.IMAGE_URL
-import com.example.auth.LocationGetter
 import com.example.auth.SkeletonLoading.ParkingSkeleton
 import com.example.auth.ViewModels.ParkingModel
 import com.example.auth.R
+import com.example.auth.Screens.TextWithIcon
 import com.example.auth.SkeletonLoading.VerticalParkingSkeleton
 
 
+
+@Composable
+fun CityDropdownMenu(
+    cities: List<String>,
+    onCitySelected: (String) -> Unit,
+    onDismissRequest: () -> Unit
+) {
+    DropdownMenu(
+        expanded = true, // Toujours ouvert
+        onDismissRequest = onDismissRequest
+    ) {
+        cities.forEach { city ->
+            DropdownMenuItem(
+                text = { Text(text = city) },
+                onClick = {
+                    onCitySelected(city)
+                    onDismissRequest()
+                })
+        }
+    }
+}
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Home(parkingModel: ParkingModel, navController: NavHostController)
 
 {
-    var location by remember { mutableStateOf<Location?>(null) }
+
     var address by remember { mutableStateOf<String?>(null) }
+
+    val cities = listOf("Alger", "Oran", "Tizi")
+
+    // 2. Variable d'état pour suivre la ville sélectionnée
+    var selectedCity by remember { mutableStateOf<String?>(null) }
+
+    // 3. Variable d'état pour gérer l'état d'expansion du menu de sélection de la ville
+    var cityMenuExpanded by remember { mutableStateOf(false) }
+
 
     val context = LocalContext.current
 
@@ -70,16 +109,19 @@ fun Home(parkingModel: ParkingModel, navController: NavHostController)
         mutableStateOf("")
     }
 
-    LocationGetter(context = context) { l, a ->
-        location = l
-        address = a
-    }
+
 
     LaunchedEffect(Unit) {
+
         if (parkingModel.parks.value.isEmpty())
             parkingModel.getAllParks(3)
     }
-    val parks = parkingModel.parks.value
+
+    address =  getAddressFromLocation(context, parkingModel.currentLocation.value)
+
+    val parks = parkingModel.parks.value.filter { parking ->
+        selectedCity == null || parking.city.equals(selectedCity, ignoreCase = true)
+    }
 
     Column (
         modifier = Modifier

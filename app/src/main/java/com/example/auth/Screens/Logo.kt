@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.auth.R
-import com.example.exo2.Destination
+import com.example.auth.Destination
 import kotlinx.coroutines.delay
 
 

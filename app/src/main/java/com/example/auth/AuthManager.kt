@@ -60,5 +60,10 @@ object AuthManager {
         val sharedPreferences = getSharedPreferences(context)
         return sharedPreferences.getInt(KEY_USERID , 0)
     }
+    private const val KEY_EMAIL = "email"
+    fun getUserEmail(context: Context): String? {
+        val sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+        return sharedPreferences.getString(KEY_EMAIL, null)
+    }
 
 }

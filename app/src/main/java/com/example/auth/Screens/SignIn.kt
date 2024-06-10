@@ -49,7 +49,7 @@ import androidx.navigation.NavHostController
 import com.example.auth.AuthManager
 import com.example.auth.ViewModels.AuthVIewModel
 import com.example.auth.R.drawable
-import com.example.exo2.Destination
+import com.example.auth.Destination
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -248,7 +248,8 @@ fun DisplaySignIn(navController: NavHostController, authModel: AuthVIewModel){
                         modifier = Modifier
                             //.fillMaxWidth()
                             .height(45.dp)
-                            .width(45.dp),
+                            .width(45.dp)
+                            ,
 
                         contentScale = ContentScale.FillWidth
                     )

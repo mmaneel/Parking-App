@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.auth.R
-import com.example.exo2.Destination
+import com.example.auth.Destination
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -73,13 +73,13 @@ fun NavScaffold(
 
 
                     NavigationBarItem(label = { Text(text = "Carte") },
-                        selected = false,
-                        onClick = { },
+                        selected = currentindex == Destination.VueCarte.route,
+                        onClick = { navController.navigate(Destination.VueCarte.route) },
                         colors = navColors,
                         icon = {
                             Icon(
                                 Icons.Default.LocationOn,
-                                contentDescription = "Profile"
+                                contentDescription = "map"
                             )
                         })
 

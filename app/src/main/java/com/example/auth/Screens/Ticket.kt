@@ -42,7 +42,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.auth.AuthManager
 import com.example.auth.ViewModels.ReservationModel
-import com.example.exo2.Destination
+import com.example.auth.Destination
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
 import com.google.zxing.common.BitMatrix
@@ -168,7 +168,7 @@ fun DisplayTicket(navController: NavHostController, id: Int, reservationModel: R
                         Spacer(modifier = Modifier.height(20.dp))
 
                         Text(
-                            text = "Arrivé:",
+                            text = "Entré:",
                             color = Color.Gray,
                             fontSize = 20.sp,
                         )
@@ -209,7 +209,7 @@ fun DisplayTicket(navController: NavHostController, id: Int, reservationModel: R
                         Spacer(modifier = Modifier.height(20.dp))
 
                         Text(
-                            text = "Départ:",
+                            text = "Sortie:",
                             color = Color.Gray,
                             fontSize = 20.sp,
                         )

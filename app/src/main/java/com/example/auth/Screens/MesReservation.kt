@@ -1,5 +1,6 @@
 package com.example.auth.Screens
 
+
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
@@ -27,6 +28,8 @@ import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -53,11 +56,12 @@ import androidx.navigation.NavHostController
 import com.example.auth.AuthManager
 import com.example.auth.BaseURL
 import com.example.auth.CoilAsyncImage
+import com.example.auth.Destination
 import com.example.auth.IMAGE_URL
 import com.example.auth.R
 import com.example.auth.ViewModels.ReservationModel
-import com.example.exo2.Destination
-import com.example.exo2.TextWithIcon
+
+
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -212,147 +216,160 @@ fun DisplayMesReservation(reservationModel: ReservationModel, navController: Nav
             ) {
                 if(exists)
                  items(reservations) {
-                     Column (
+
+                     Card(
                          modifier = Modifier
                              .fillMaxWidth()
-                             .padding(bottom = 20.dp)
+                             .height(205.dp)
+                             .padding(vertical = 8.dp, horizontal = 2.dp),
+                         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                     ) {
 
-                             .clip(RoundedCornerShape(10.dp))
-                             .background(color = Color.White)
-                             .clickable {
-
-                             },
-                     ){
-                         Row(
+                         Column(
                              modifier = Modifier
-                                .height(140.dp)
+                                 .fillMaxSize()
+                                 .clip(RoundedCornerShape(10.dp))
+                                 .background(color = Color.White)
+                                 .clickable {
+
+                                 },
+                         ) {
+                             Row(
+                                 modifier = Modifier
+                                     .height(140.dp)
                              )
-                         {
-                             Box(
-                                 modifier = Modifier
-                                     .fillMaxHeight()
-                                     .weight(1.5f)
-                                     .padding(5.dp),
-                                 contentAlignment = Alignment.Center
-                             ) {
-                                 CoilAsyncImage(
-                                     model = IMAGE_URL + it.parking.img,
-                                     modifier = Modifier
-                                         .aspectRatio(1f)
-                                         .clip(RoundedCornerShape(10.dp)),
-                                     contentDescription = "Parking Image",
-                                     contentScale = ContentScale.Crop,
-                                     placeholder =  R.drawable.parking_ph,
-                                     error = R.drawable.parking_ph,
-                                 )
-                             }
-
-                             Column(
-                                 modifier = Modifier
-                                     .weight(2f)
-                                     .fillMaxHeight(),
-                                 verticalArrangement = Arrangement.Center,
-                             ) {
-
+                             {
                                  Box(
                                      modifier = Modifier
-                                         .background(Color(0xFFF6F6F6))
-                                         .padding(horizontal = 5.dp)
-                                         .clip(RoundedCornerShape(10.dp)),
-                                 ){
-                                     Text(
-                                         text = "car parking",
-                                         fontSize = 15.sp,
-                                         color = Color(0xFF7136ff),
+                                         .fillMaxHeight()
+                                         .weight(1.5f)
+                                         .padding(5.dp),
+                                     contentAlignment = Alignment.Center
+                                 ) {
+                                     CoilAsyncImage(
+                                         model = IMAGE_URL + it.parking.img,
+                                         modifier = Modifier
+                                             .aspectRatio(1f)
+                                             .clip(RoundedCornerShape(10.dp)),
+                                         contentDescription = "Parking Image",
+                                         contentScale = ContentScale.Crop,
+                                         placeholder = R.drawable.parking_ph,
+                                         error = R.drawable.parking_ph,
                                      )
                                  }
 
+                                 Column(
+                                     modifier = Modifier
+                                         .weight(2f)
+                                         .fillMaxHeight(),
+                                     verticalArrangement = Arrangement.Center,
+                                 ) {
 
-                                 Text(
-                                     text = it.parking.name,
-                                     fontSize = 19.sp,
-                                     fontWeight = FontWeight.Bold,
-                                 )
+                                     Box(
+                                         modifier = Modifier
+                                             .background(Color(0xFFF6F6F6))
+                                             .padding(horizontal = 5.dp)
+                                             .clip(RoundedCornerShape(10.dp)),
+                                     ) {
+                                         Text(
+                                             text = "car parking",
+                                             fontSize = 15.sp,
+                                             color = Color(0xFF7136ff),
+                                         )
+                                     }
 
-                                 TextWithIcon(
-                                     text = formatTime(it.arrivalTime),
-                                     fontSize = 15.sp,
-                                     color = Color.Gray,
-                                     Icon = Icons.Default.DateRange
-                                 )
-
-                                 Spacer(modifier = Modifier.height(10.dp))
-
-                                 Row (verticalAlignment = Alignment.Bottom){
 
                                      Text(
-                                         text = "${it.parking.price}DA",
-                                         fontSize = 18.sp,
-                                         color = Color(0xFF7136ff),
+                                         text = it.parking.name,
+                                         fontSize = 19.sp,
+                                         fontWeight = FontWeight.Bold,
                                      )
-                                     Spacer(modifier = Modifier.width(2.dp))
-                                     Text(
-                                         text = "/hr",
+
+                                     TextWithIcon(
+                                         text = formatTime(it.arrivalTime),
                                          fontSize = 15.sp,
                                          color = Color.Gray,
+                                         Icon = Icons.Default.DateRange
                                      )
-                                 }
 
+                                     Spacer(modifier = Modifier.height(10.dp))
 
+                                     Row(verticalAlignment = Alignment.Bottom) {
 
-
-                             }
-                         }
-
-                         Row (
-                             modifier = Modifier
-                                 .fillMaxWidth(),
-                             horizontalArrangement = Arrangement.SpaceAround
-                         ){
-                             Spacer(modifier = Modifier.weight(.05f))
-                             Button(
-                                 modifier = Modifier.weight(.4f),
-                                 colors = ButtonDefaults.buttonColors(
-                                     containerColor = Color(0x22000000)
-                                 ),
-                                 onClick = {
-                                     CoroutineScope(Dispatchers.IO).launch {
-                                         reservationModel.deleteReservation(reservation = it, context)
+                                         Text(
+                                             text = "${it.parking.price}DA",
+                                             fontSize = 18.sp,
+                                             color = Color(0xFF7136ff),
+                                         )
+                                         Spacer(modifier = Modifier.width(2.dp))
+                                         Text(
+                                             text = "/hr",
+                                             fontSize = 15.sp,
+                                             color = Color.Gray,
+                                         )
                                      }
-                                 }) {
-                                 Text(color = Color(0xFF7136ff), text = "Annuler")
-                             }
-                             Spacer(modifier = Modifier.weight(.05f))
 
-                             if(it.payee)
-                             {
-                                 Button(
-                                     modifier = Modifier.weight(.4f),
-                                     colors = ButtonDefaults.buttonColors(
-                                         containerColor = Color(0xFF7136ff)
-                                     ),
-                                     onClick = { navController.navigate(Destination.Ticket.getRoute(it.id)) }) {
-                                     Text(text = "E-Ticket")
+
                                  }
                              }
-                             else {
+
+                             Row(
+                                 modifier = Modifier
+                                     .fillMaxWidth(),
+                                 horizontalArrangement = Arrangement.SpaceAround
+                             ) {
+                                 Spacer(modifier = Modifier.weight(.05f))
                                  Button(
                                      modifier = Modifier.weight(.4f),
                                      colors = ButtonDefaults.buttonColors(
-                                         containerColor = Color(0xFF7136ff)
+                                         containerColor = Color(0x22000000)
                                      ),
                                      onClick = {
-                                         reservationModel.getAllReservations(context)
-                                         navController.navigate(Destination.Payment.getRoute(it.id))
+                                         CoroutineScope(Dispatchers.IO).launch {
+                                             reservationModel.deleteReservation(
+                                                 reservation = it,
+                                                 context
+                                             )
+                                         }
                                      }) {
-                                     Text(text = "Valider")
+                                     Text(color = Color(0xFF7136ff), text = "Annuler")
                                  }
+                                 Spacer(modifier = Modifier.weight(.05f))
+
+                                 if (it.payee) {
+                                     Button(
+                                         modifier = Modifier.weight(.4f),
+                                         colors = ButtonDefaults.buttonColors(
+                                             containerColor = Color(0xFF7136ff)
+                                         ),
+                                         onClick = {
+                                             navController.navigate(
+                                                 Destination.Ticket.getRoute(
+                                                     it.id
+                                                 )
+                                             )
+                                         }) {
+                                         Text(text = "E-Ticket")
+                                     }
+                                 } else {
+                                     Button(
+                                         modifier = Modifier.weight(.4f),
+                                         colors = ButtonDefaults.buttonColors(
+                                             containerColor = Color(0xFF7136ff)
+                                         ),
+                                         onClick = {
+                                             reservationModel.getAllReservations(context)
+                                             navController.navigate(Destination.Payment.getRoute(it.id))
+                                         }) {
+                                         Text(text = "Valider")
+                                     }
+                                 }
+
+                                 Spacer(modifier = Modifier.weight(.05f))
                              }
-
-                             Spacer(modifier = Modifier.weight(.05f))
                          }
-                     }
 
+                     }
                 }
             }
         }

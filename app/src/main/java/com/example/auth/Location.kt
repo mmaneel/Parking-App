@@ -27,6 +27,7 @@ import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -37,63 +38,29 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
 
-    @SuppressLint("MissingPermission")
-    suspend fun getLastKnownLocation(context: Context): Location? = suspendCancellableCoroutine { cont ->
-        val fusedLocationClient: FusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context)
-        fusedLocationClient.lastLocation
-            .addOnSuccessListener { location ->
-                cont.resume(location)
-            }
-            .addOnFailureListener { exception ->
-                cont.resumeWithException(exception)
-            }
-    }
 
 
-    suspend fun getAddressFromLocation(context: Context, location: Location?): String? {
-        return withContext(Dispatchers.IO) {
+    fun getAddressFromLocation(context: Context, location: LatLng?): String? {
+
             try {
                 if(location == null)
-                    return@withContext null
+                    return null
                 val geocoder = Geocoder(context, Locale.getDefault())
                 val addresses = geocoder.getFromLocation(location.latitude, location.longitude, 1)
                 if (addresses?.isNotEmpty() == true) {
                     val address = addresses[0]
-                    address.getAddressLine(0).substringBeforeLast(",").replace("،",",")
+                    return address.getAddressLine(0).substringBeforeLast(",").replace("،",",")
                 } else {
-                    null
+                    return null
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
-                null
-            }
-        }
-    }
-
-
-    @OptIn(ExperimentalPermissionsApi::class)
-    @Composable
-    fun LocationGetter(context : Context, granted : (Location?, String?) -> Unit)  {
-        val locationPermissionState = rememberPermissionState(android.Manifest.permission.ACCESS_FINE_LOCATION)
-        var permitted by remember {
-            mutableStateOf(false)
-        }
-
-        LaunchedEffect(Unit) {
-                if (!locationPermissionState.status.isGranted) {
-                    locationPermissionState.launchPermissionRequest()
-                    permitted = true
-                }
-
-                if(permitted){
-                    val location = getLastKnownLocation(context)
-                    location.let {
-                        granted(it, getAddressFromLocation(context,it))
-                    }
-                }
-
+                return null
             }
     }
+
+
+
 
 
 
