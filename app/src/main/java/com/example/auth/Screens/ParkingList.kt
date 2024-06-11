@@ -1,5 +1,6 @@
 package com.example.auth.Screens
 
+import android.support.customtabs.IPostMessageService.Default
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -42,7 +43,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.RangeSlider
-import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -61,6 +62,7 @@ import com.example.auth.IMAGE_URL
 import com.example.auth.SkeletonLoading.ParkingSkeleton
 import com.example.auth.ViewModels.ParkingModel
 import com.example.auth.R
+import com.google.android.gms.maps.model.LatLng
 import androidx.compose.material3.IconButton as IconButton1
 
 
@@ -133,9 +135,11 @@ fun SearchBar(
 
 
 @Composable
-fun TextWithIcon(text:String, fontSize:TextUnit,color:Color ,Icon:ImageVector, iconeColor:Color = color)
+fun TextWithIcon(text:String, fontSize:TextUnit,color:Color ,Icon:ImageVector, iconeColor:Color = color, modifier: Modifier = Modifier)
 {
-    Row {
+    Row (
+        modifier = modifier
+    ){
         Icon(
             imageVector = Icon,
             contentDescription = null, // Set to null if the icon is purely decorative
@@ -244,24 +248,34 @@ fun ParkingList(parkingModel: ParkingModel, navController: NavHostController, se
             }
         }
 
-        Text(
-            text= "prix:"
-        )
+        if(searching.value)
+            Row (
+                   verticalAlignment = Alignment.CenterVertically
+                ){
+                    Text(
+                        text= "prix: "
+                    )
 
-        Column {
-            RangeSlider(
-                modifier =  Modifier
-                    .fillMaxWidth(.9f),
-                value = priceRange,
-                steps = 15,
-                onValueChange = { range -> priceRange = range },
-                valueRange = 50f..500f,
-                onValueChangeFinished = {
+                    Spacer(modifier = Modifier.width(10.dp))
 
-                },
-            )
-            Text(text = priceRange.toString())
-        }
+                    Text(text = "${priceRange.start.toInt()}")
+                        RangeSlider(
+                            modifier = Modifier.fillMaxWidth(.7f),
+                            value = priceRange,
+                            steps = 10,
+                            onValueChange = { range -> priceRange = range },
+                            valueRange = 50f..500f,
+                            colors = SliderDefaults.colors(
+                                thumbColor = Color(0xFF7136ff),
+                                activeTickColor = Color(0xFF7136ff),
+                            ),
+                            onValueChangeFinished = {
+                            },
+                        )
+                    Text(text = "${priceRange.endInclusive.toInt()}")
+                }
+
+
 
 
         //Displayed if no parks were found
@@ -273,7 +287,7 @@ fun ParkingList(parkingModel: ParkingModel, navController: NavHostController, se
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = "Aucun parking trouvé",
+                    text = "impossible de récupérer les parcs",
                     color = Color.Gray
                 )
             }
@@ -289,7 +303,7 @@ fun ParkingList(parkingModel: ParkingModel, navController: NavHostController, se
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(150.dp)
+                        .height(160.dp)
                         .padding(vertical = 8.dp, horizontal = 2.dp),
                     elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
                 ) {
@@ -345,6 +359,7 @@ fun ParkingList(parkingModel: ParkingModel, navController: NavHostController, se
 
 
                             Text(
+                                modifier = Modifier.height(50.dp),
                                 text = it.name,
                                 fontSize = 19.sp,
                                 fontWeight = FontWeight.Bold,
@@ -354,7 +369,11 @@ fun ParkingList(parkingModel: ParkingModel, navController: NavHostController, se
                                 text = it.city,
                                 fontSize = 15.sp,
                                 color = Color.Gray,
-                                Icon = Icons.Default.LocationOn
+                                Icon = Icons.Default.LocationOn,
+                                modifier = Modifier.clickable {
+                                    parkingModel.mapInit = LatLng(it.latitude, it.longitude)
+                                    navController.navigate(Destination.VueCarte.route)
+                                }
                             )
 
                             Spacer(modifier = Modifier.height(10.dp))
@@ -378,6 +397,7 @@ fun ParkingList(parkingModel: ParkingModel, navController: NavHostController, se
                         }
                     }
                 }
+
             }
         }
 

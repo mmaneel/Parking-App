@@ -1,9 +1,7 @@
 package com.example.auth
 
 
-import android.Manifest
-import android.content.pm.PackageManager
-import android.location.Location
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -30,23 +28,20 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.platform.LocalContext
-import android.widget.Toast
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.LaunchedEffect
@@ -54,16 +49,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.core.content.ContextCompat
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavHostController
-import com.example.auth.CoilAsyncImage
-import com.example.auth.IMAGE_URL
 import com.example.auth.SkeletonLoading.ParkingSkeleton
 import com.example.auth.ViewModels.ParkingModel
-import com.example.auth.R
 import com.example.auth.Screens.TextWithIcon
 import com.example.auth.SkeletonLoading.VerticalParkingSkeleton
-
+import com.google.android.gms.maps.model.LatLng
 
 
 @Composable
@@ -92,15 +85,7 @@ fun Home(parkingModel: ParkingModel, navController: NavHostController)
 
 {
 
-    var address by remember { mutableStateOf<String?>(null) }
-
-    val cities = listOf("Alger", "Oran", "Tizi")
-
-    // 2. Variable d'état pour suivre la ville sélectionnée
-    var selectedCity by remember { mutableStateOf<String?>(null) }
-
-    // 3. Variable d'état pour gérer l'état d'expansion du menu de sélection de la ville
-    var cityMenuExpanded by remember { mutableStateOf(false) }
+    var address by remember { mutableStateOf<String?>("Posision non reconu!") }
 
 
     val context = LocalContext.current
@@ -112,16 +97,15 @@ fun Home(parkingModel: ParkingModel, navController: NavHostController)
 
 
     LaunchedEffect(Unit) {
-
         if (parkingModel.parks.value.isEmpty())
             parkingModel.getAllParks(3)
+        if (parkingModel.recomended.value.isEmpty())
+            parkingModel.getAllParks(3,false)
     }
 
     address =  getAddressFromLocation(context, parkingModel.currentLocation.value)
 
-    val parks = parkingModel.parks.value.filter { parking ->
-        selectedCity == null || parking.city.equals(selectedCity, ignoreCase = true)
-    }
+    val parks = parkingModel.parks.value
 
     Column (
         modifier = Modifier
@@ -188,18 +172,29 @@ fun Home(parkingModel: ParkingModel, navController: NavHostController)
         }
 
         //Displayed if no parks were found
-        if (parks.isEmpty() and !parkingModel.loading.value)
-
+        if (parks.isEmpty() and !parkingModel.loading.value){
             Column(
                 modifier = Modifier
                     .fillMaxHeight(.9f),
-                verticalArrangement = Arrangement.Center
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                Image(
+                    modifier = Modifier.size(200.dp),
+                    painter = painterResource(id = R.drawable.parking_ph) , contentDescription = "",
+                    alpha = .7f,
+                )
+                Spacer(modifier = Modifier.height(10.dp),)
                 Text(
-                    text = "Aucun parking trouvé",
+                    text = "impossible de récupérer les parkings",
                     color = Color.Gray
                 )
             }
+
+            return
+        }
+
+
 
 
 
@@ -238,7 +233,7 @@ fun Home(parkingModel: ParkingModel, navController: NavHostController)
                         .fillMaxWidth()
                         .padding(16.dp)
                 ) {
-                    items(parks.take(3)) {
+                    items(parkingModel.recomended.value) {
                         Card(
                             modifier = Modifier
                                 .width(300.dp)
@@ -250,8 +245,12 @@ fun Home(parkingModel: ParkingModel, navController: NavHostController)
                                     .background(Color.White)
                                     .padding(5.dp)
                                     .clickable {
-                                        navController.navigate(Destination.ParkingDetails.getRoute(it.id))
-                                     },
+                                        navController.navigate(
+                                            Destination.ParkingDetails.getRoute(
+                                                it.id
+                                            )
+                                        )
+                                    },
                             ) {
                                 CoilAsyncImage(
                                     model = IMAGE_URL + it.img,
@@ -289,7 +288,11 @@ fun Home(parkingModel: ParkingModel, navController: NavHostController)
                                     text = it.city,
                                     fontSize = 15.sp,
                                     color = Color.Gray,
-                                    Icon = Icons.Default.LocationOn
+                                    Icon = Icons.Default.LocationOn,
+                                    modifier = Modifier.clickable {
+                                        parkingModel.mapInit = LatLng(it.latitude, it.longitude)
+                                        navController.navigate(Destination.VueCarte.route)
+                                    }
                                 )
 
                                 Spacer(modifier = Modifier.height(10.dp))
@@ -345,7 +348,7 @@ fun Home(parkingModel: ParkingModel, navController: NavHostController)
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(150.dp)
+                            .height(160.dp)
                             .padding(vertical = 8.dp, horizontal = 2.dp),
                         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
                     ) {
@@ -401,6 +404,7 @@ fun Home(parkingModel: ParkingModel, navController: NavHostController)
 
 
                                 Text(
+                                    modifier = Modifier.height(50.dp),
                                     text = it.name,
                                     fontSize = 19.sp,
                                     fontWeight = FontWeight.Bold,
@@ -410,7 +414,11 @@ fun Home(parkingModel: ParkingModel, navController: NavHostController)
                                     text = it.city,
                                     fontSize = 15.sp,
                                     color = Color.Gray,
-                                    Icon = Icons.Default.LocationOn
+                                    Icon = Icons.Default.LocationOn,
+                                    modifier = Modifier.clickable {
+                                        parkingModel.mapInit = LatLng(it.latitude, it.longitude)
+                                        navController.navigate(Destination.VueCarte.route)
+                                    }
                                 )
 
                                 Spacer(modifier = Modifier.height(10.dp))
@@ -438,11 +446,6 @@ fun Home(parkingModel: ParkingModel, navController: NavHostController)
 
                 }
             }
-        }
-
-
-        if(parkingModel.error.value.isNotEmpty()){
-            Toast.makeText(context, parkingModel.error.value, Toast.LENGTH_LONG).show()
         }
 
 }

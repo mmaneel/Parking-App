@@ -90,8 +90,11 @@ fun DisplayPayment(navController: NavHostController, id: Int, reservvationModel 
                         ),
                         onClick = {
                             reservvationModel.payReservation(id, pickerValue, context)
-                            if(!reservvationModel.error.value)
+                            if(!reservvationModel.error.value){
+                                navController.navigate(Destination.MesReservation.route)
                                 navController.navigate(Destination.Ticket.getRoute(id))
+                            }
+
                         }
                     ) {
                         Text(text = "Valider", fontWeight = FontWeight.Bold, fontSize = 20.sp)

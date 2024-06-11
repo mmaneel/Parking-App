@@ -40,22 +40,22 @@ import kotlin.coroutines.resumeWithException
 
 
 
-    fun getAddressFromLocation(context: Context, location: LatLng?): String? {
+    fun getAddressFromLocation(context: Context, location: LatLng?): String {
 
             try {
                 if(location == null)
-                    return null
+                    return "Localisation non reconu"
                 val geocoder = Geocoder(context, Locale.getDefault())
                 val addresses = geocoder.getFromLocation(location.latitude, location.longitude, 1)
-                if (addresses?.isNotEmpty() == true) {
+                return if (addresses?.isNotEmpty() == true) {
                     val address = addresses[0]
-                    return address.getAddressLine(0).substringBeforeLast(",").replace("،",",")
+                    address.getAddressLine(0).substringBeforeLast(",").replace("،",",")
                 } else {
-                    return null
+                    "Localisation non reconu "
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
-                return null
+                return "Localisation non reconu"
             }
     }
 

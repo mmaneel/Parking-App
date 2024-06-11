@@ -64,8 +64,14 @@ fun maps(parkingViewModel: ParkingModel, navController: NavHostController) {
     var properties by remember {
         mutableStateOf(MapProperties(mapType = MapType.TERRAIN))
     }
+    val nearbyParks = parkingViewModel.parks.value
 
-    val nearbyParks by parkingViewModel.parks
+    LaunchedEffect(Unit) {
+        if (parkingViewModel.parks.value.isEmpty() || parkingViewModel.parks.value.size <= 3)
+            parkingViewModel.getAllParks()
+    }
+
+
 
     Column (
         modifier = Modifier
@@ -124,23 +130,27 @@ fun maps(parkingViewModel: ParkingModel, navController: NavHostController) {
 
         ) {
             parkingViewModel.currentLocation.value?.let { location ->
+                val Myicon = bitmapDescriptorFromVector(context, R.drawable.carmark)
+                val Parkicon = bitmapDescriptorFromVector(context, R.drawable.parkmark)
                 Marker(
                     state = MarkerState(position = location),
                     title = "Current Location",
+                    icon = Myicon
                 )
 
                 // Update the camera position to the current location
                 LaunchedEffect(location) {
-                    cameraPositionState.position = CameraPosition.fromLatLngZoom(location, 10f)
+                    cameraPositionState.position = CameraPosition.fromLatLngZoom(parkingViewModel.mapInit?: location, 15f)
+                    parkingViewModel.mapInit = location
                 }
 
                 // Display markers for nearby parking
                 nearbyParks.forEach { parking ->
-                    val icon = bitmapDescriptorFromVector(context, R.drawable.car) // Replace with your drawable resource
+
                     Marker(
                         state = MarkerState(position = LatLng(parking.latitude, parking.longitude)),
                         title = parking.name,
-                        icon = icon,
+                        icon = Parkicon,
                         onClick = {
                             navController.navigate(
                                 Destination.ParkingDetails.getRoute(parking.id))

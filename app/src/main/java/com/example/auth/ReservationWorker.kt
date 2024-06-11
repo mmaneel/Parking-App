@@ -29,17 +29,17 @@ class ReservationWorker(
     @RequiresApi(Build.VERSION_CODES.O)
     override suspend fun doWork(): Result {
         withContext(Dispatchers.IO) {
+
             // Query the database for reservations
             val reservations = getReservationsFromDatabase()
+
 
             // Get current time
             val currentTime = System.currentTimeMillis()
 
             for (reservation in reservations) {
                 val notificationTime = reservation.arrivalTime.time - 3600000 // 1 hour before
-
-                if (currentTime <= notificationTime && notificationTime <= currentTime + NOTI_CHECK*60000) {
-                    // Send notification
+                if (currentTime in notificationTime .. notificationTime + 15*60000) {
                     sendNotification(reservation)
                 }
             }
@@ -82,8 +82,8 @@ class ReservationWorker(
 
         val builder = NotificationCompat.Builder(context, channelId)
             .setSmallIcon(R.drawable.logo)
-            .setContentTitle("Upcoming Reservation")
-            .setContentText("You have a reservation at ${formatTime(reservation.arrivalTime)}")
+            .setContentTitle("Reservation à venir")
+            .setContentText("Vous avez une reservation ${reservation.id} le ${formatTime(reservation.arrivalTime)}")
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)

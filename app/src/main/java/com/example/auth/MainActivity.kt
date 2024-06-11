@@ -100,38 +100,12 @@ class MainActivity : ComponentActivity() {
 fun ParkingApp(navController: NavHostController, reservationModel: ReservationModel, parkingModel: ParkingModel,authModel: AuthVIewModel)
 {
 
-    val context = LocalContext.current
-    var hasLocationPermission by remember {
-        mutableStateOf(
-            ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-        )
+    LocationPermissionRequest {
+        parkingModel.currentLocation.value = LatLng(it.latitude, it.longitude)
     }
-;
-    val locationLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission(),
-        onResult = { isGranted ->
-            hasLocationPermission = isGranted
-        }
-    )
+    NotificationPermissionRequest {
 
-    LaunchedEffect(Unit) {
-        if (!hasLocationPermission) {
-            locationLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-        }
     }
-
-    val fusedLocationClient: FusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context)
-
-
-    if (hasLocationPermission) {
-        fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
-            location?.let {
-                parkingModel.currentLocation.value = LatLng(it.latitude, it.longitude)
-            }
-        }
-    }
-
-
 
     NavHost(navController = navController, startDestination = Destination.Splash.route){
         composable(Destination.Splash.route) { firstPage(navController) }
@@ -150,6 +124,7 @@ fun ParkingApp(navController: NavHostController, reservationModel: ReservationMo
             } }
         composable(Destination.Profile.route) {  NavScaffold(navController = navController) { DisplayProfile(navController) }}
         composable(Destination.Home.route) {
+            parkingModel.failed.value = false
             NavScaffold(navController = navController) {
                 Home(parkingModel , navController)
             }

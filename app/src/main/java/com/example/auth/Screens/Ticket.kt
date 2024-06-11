@@ -159,8 +159,8 @@ fun DisplayTicket(navController: NavHostController, id: Int, reservationModel: R
                             fontSize = 20.sp,
                         )
                         Text(
-                            modifier = Modifier.height(22.dp),
-                            text = "${details?.parking?.name}",
+                            modifier = Modifier.height(26.dp),
+                            text = "${details?.parking?.name?.replace("Parking", "")}",
                             color = Color.Black,
                             fontSize = 20.sp,
                         )
@@ -173,7 +173,7 @@ fun DisplayTicket(navController: NavHostController, id: Int, reservationModel: R
                             fontSize = 20.sp,
                         )
                         Text(
-                            text = "${details?.arrivalTime?.hours}:${details?.arrivalTime?.minutes}",
+                            text = "${details?.arrivalTime?.hours}:${if(details?.arrivalTime?.minutes in 0..9)  "0${details?.arrivalTime?.minutes}" else "${details?.arrivalTime?.minutes}"}",
                             color = Color.Black,
                             fontSize = 20.sp,
                         )
@@ -214,7 +214,7 @@ fun DisplayTicket(navController: NavHostController, id: Int, reservationModel: R
                             fontSize = 20.sp,
                         )
                         Text(
-                            text = "${departureTime.hours}:${departureTime.minutes}",
+                            text = "${departureTime.hours}:${if(departureTime.minutes in 0..9)  "0${departureTime.minutes}" else "${departureTime.minutes}"}",
                             color = Color.Black,
                             fontSize = 20.sp,
                         )

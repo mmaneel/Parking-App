@@ -22,7 +22,14 @@ import java.util.Date
 interface Endpoints {
 
     @GET("parking")
-    suspend fun getAllParks(@Query("limit") limit: Int): Response<List<Parking>>
+    suspend fun getRecommendedParks(@Query("limit") limit: Int): Response<List<Parking>>
+
+    @GET("parking")
+    suspend fun getCloseParks(
+        @Query("latitude") latitude: Double,
+        @Query("longitude") longitude: Double,
+        @Query("limit") limit: Int
+    ): Response<List<Parking>>
 
 
     @GET("parking/{id}")

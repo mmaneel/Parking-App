@@ -18,29 +18,46 @@ import kotlinx.coroutines.withContext
 class ParkingModel (private val parkingRepo : ParkingRepository) : ViewModel(){
 
     val parks = mutableStateOf(listOf<Parking>())
+    val recomended = mutableStateOf(listOf<Parking>())
     val details = mutableStateOf<Parking?>(null)
+    val failed = mutableStateOf(false)
 
     val loading = mutableStateOf(false)
     val error =  mutableStateOf("")
+
+
 
     val nearbyParks = mutableStateOf(listOf<Parking>())
 
     var currentLocation = mutableStateOf<LatLng?>(null)
 
-    fun getAllParks(limit: Int = 50){
+    var mapInit = currentLocation.value
+
+    fun getAllParks(limit: Int = 50, nearby: Boolean = true){
+        if(failed.value)
+            return
         loading.value = true
         viewModelScope.launch {
 
             withContext(Dispatchers.IO) {
-                val response =  parkingRepo.getAllParks(limit)
-                if(response.isSuccessful){
-                    val data = response.body()
-                    if(data != null)
-                        parks.value = data
-                    }
-                else{
-                    if(error.value.isEmpty() )
-                        error.value = "impossible de récupérer les données"
+                try {
+                    val response =
+                        if (nearby && currentLocation.value != null)
+                            parkingRepo.getAllParks(limit,currentLocation.value)
+                        else parkingRepo.getAllParks(limit)
+
+
+                    if(response.isSuccessful){
+                        val data = response.body()
+                        if(data != null)
+                            if(nearby)
+                                parks.value = data
+                            else
+                                recomended.value = data
+                        }
+                }catch (_:Exception)
+                {
+                    failed.value = true
                 }
 
             }
@@ -48,6 +65,8 @@ class ParkingModel (private val parkingRepo : ParkingRepository) : ViewModel(){
         }
 
     }
+
+
 
 
     fun getPark(id: Int){
@@ -68,25 +87,6 @@ class ParkingModel (private val parkingRepo : ParkingRepository) : ViewModel(){
         }
     }
 
-    fun getNearbyParks(latitude: Double, longitude: Double, radius: Double) {
-        loading.value = true
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                val response = parkingRepo.getNearbyParkings(latitude, longitude, radius)
-                if (response.isSuccessful) {
-                    val data = response.body()
-                    if (data != null) {
-                        Log.d("getNearbyParks", "Data received: $data")
-                        nearbyParks.value = data
-
-                    }
-                } else {
-                    error.value = "Unable to fetch nearby parks"
-                }
-                loading.value = false
-            }
-        }
-    }
 
 
 

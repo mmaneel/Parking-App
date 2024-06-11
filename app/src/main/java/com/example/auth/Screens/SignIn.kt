@@ -2,6 +2,7 @@ package com.example.auth.Screens
 
 import android.content.Intent
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResult
@@ -106,11 +107,13 @@ fun DisplaySignIn(navController: NavHostController, authModel: AuthVIewModel){
 
         },
         onAuthError = {
+            errorMessage = "erreur de connexion"
             user = null
         },
 
         userModel = authModel
     )
+
     Column (
         modifier = Modifier
             .padding(10.dp)
